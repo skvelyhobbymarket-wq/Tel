@@ -17,10 +17,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "exa
 
 import primitives
 from gear import gear
+from knob import knob
 from mug import mug
 
 
 def build(args) -> "primitives.Mesh":
+    if args.shape == "knob":
+        return knob(outer_d=args.outer_d, root_d=args.root_d, height=args.knob_height,
+                    pockets=args.pockets, pocket_d=args.pocket_d,
+                    pocket_circle_d=args.pocket_circle_d, pocket_depth=args.pocket_depth,
+                    thread_d=args.thread_d, pitch=args.pitch, thread_depth=args.thread_depth)
     if args.shape == "mug":
         return mug(height=args.height, radius=args.radius)
     if args.shape == "gear":
@@ -38,7 +44,7 @@ def build(args) -> "primitives.Mesh":
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description="Generátor 3D modelů do STL/OBJ.")
-    p.add_argument("shape", choices=["mug", "gear", "sphere", "box", "cylinder", "torus"])
+    p.add_argument("shape", choices=["knob", "mug", "gear", "sphere", "box", "cylinder", "torus"])
     p.add_argument("--out", default=None, help="výstupní soubor (.stl nebo .obj)")
     p.add_argument("--radius", type=float, default=40.0)
     p.add_argument("--height", type=float, default=95.0)
@@ -47,6 +53,18 @@ def main(argv=None) -> int:
     p.add_argument("--module", type=float, default=3.0)
     p.add_argument("--thickness", type=float, default=8.0)
     p.add_argument("--bore", type=float, default=8.0)
+    knob_group = p.add_argument_group("kolečko (knob), rozměry v mm")
+    knob_group.add_argument("--outer-d", type=float, default=60.0, help="průměr přes laloky")
+    knob_group.add_argument("--root-d", type=float, default=46.0, help="průměr v zářezech")
+    knob_group.add_argument("--knob-height", type=float, default=20.0)
+    knob_group.add_argument("--pockets", type=int, default=7)
+    knob_group.add_argument("--pocket-d", type=float, default=9.0)
+    knob_group.add_argument("--pocket-circle-d", type=float, default=34.0)
+    knob_group.add_argument("--pocket-depth", type=float, default=13.0)
+    knob_group.add_argument("--thread-d", type=float, default=12.0, help="velký průměr závitu")
+    knob_group.add_argument("--pitch", type=float, default=1.75, help="stoupání závitu")
+    knob_group.add_argument("--thread-depth", type=float, default=14.0, help="hloubka díry")
+    p.add_argument("--preview", default=None, help="vykreslit náhled do PNG")
     args = p.parse_args(argv)
 
     out = args.out or f"{args.shape}.stl"
@@ -58,6 +76,12 @@ def main(argv=None) -> int:
         m.write_obj(out, name=args.shape)
     else:
         m.write_stl(out, name=args.shape)
+
+    if args.preview:
+        from preview import render
+        os.makedirs(os.path.dirname(os.path.abspath(args.preview)), exist_ok=True)
+        render(m, args.preview)
+        print(f"náhled: {args.preview}")
 
     lo, hi = m.bounds()
     size = tuple(round(hi[i] - lo[i], 2) for i in range(3))

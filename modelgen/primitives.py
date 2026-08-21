@@ -183,3 +183,38 @@ def ring_extrude(outer: list[tuple[float, float]], inner: list[tuple[float, floa
         m.add_quad(ot[i], ot[j], it[j], it[i])   # víko (mezikruží)
         m.add_quad(ib[i], ib[j], ob[j], ob[i])   # dno
     return m
+
+
+def prism(outer: list[tuple[float, float]], holes: list[list[tuple[float, float]]] | None = None,
+          height: float = 1.0, z0: float = 0.0) -> Mesh:
+    """Vytažení obecného obrysu s libovolným počtem průchozích otvorů.
+
+    Na rozdíl od `extrude` triangulují víka ořezáváním uší, takže obrys smí
+    být konkávní. Otvory musí ležet uvnitř obrysu a navzájem se neprotínat.
+    """
+    from triangulate import signed_area, triangulate
+
+    pts, tris = triangulate(outer, holes)
+    m = Mesh()
+    bottom = [m.add_vertex(x, y, z0) for x, y in pts]
+    top = [m.add_vertex(x, y, z0 + height) for x, y in pts]
+    for a, b, c in tris:
+        m.add_face(top[a], top[b], top[c])       # víko, normála +z
+        m.add_face(bottom[c], bottom[b], bottom[a])  # dno, normála -z
+
+    def wall(loop: list[tuple[float, float]]) -> None:
+        # Stěna se staví ze samostatných vrcholů, aby na můstcích z triangulace
+        # nezůstaly viset zdvojené indexy. Směr normály nese pořadí bodů:
+        # obrys proti směru hodinových ručiček dá normálu ven, otvor po směru
+        # dá normálu do otvoru — jeden vzorec stačí na oboje.
+        n = len(loop)
+        ring_b = [m.add_vertex(x, y, z0) for x, y in loop]
+        ring_t = [m.add_vertex(x, y, z0 + height) for x, y in loop]
+        for i in range(n):
+            j = (i + 1) % n
+            m.add_quad(ring_b[i], ring_b[j], ring_t[j], ring_t[i])
+
+    wall(list(outer) if signed_area(outer) > 0 else list(reversed(outer)))
+    for hole in holes or []:
+        wall(list(reversed(hole)) if signed_area(hole) > 0 else list(hole))
+    return m

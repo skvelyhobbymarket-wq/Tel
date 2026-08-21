@@ -7,6 +7,7 @@ i pro import do Blenderu.
 ## Rychlý start
 
 ```bash
+python3 modelgen/cli.py knob --out out/kolecko.stl --preview out/kolecko.png
 python3 modelgen/cli.py mug  --out out/hrnek.stl
 python3 modelgen/cli.py gear --teeth 24 --module 2.5 --out out/kolo.stl
 python3 modelgen/cli.py sphere --radius 20 --out out/koule.obj
@@ -41,18 +42,50 @@ model.write_stl("out/podstavec.stl")
 | `extrude(polygon, h)` | vytažení polygonu (v rovině xy) |
 | `ring_extrude(outer, inner, h)` | vytažení mezikruží — průchozí otvor |
 | `revolve(profile, segments)` | rotace profilu `[(r, z), ...]` kolem osy z |
+| `prism(outer, holes, h)` | vytažení obecného (i konkávního) obrysu s otvory |
+
+`modelgen/triangulate.py` — triangulace polygonu s otvory ořezáváním uší.
+
+`modelgen/thread.py` — `threaded_hole()` generuje slepou díru se skutečným
+vnitřním metrickým závitem jako helikální plochu, bez booleovských operací.
+
+`modelgen/preview.py` — `render()` vykreslí síť do PNG (z-buffer, jen stdlib),
+takže jde tvar zkontrolovat bez sliceru.
 
 `modelgen/mesh.py` — třída `Mesh` s `translated`, `scaled`, `rotated_x/y/z`,
 `extend`, `bounds`, `write_stl`, `write_obj`.
 
-`modelgen/examples/` — `mug.py` (parametrický hrnek) a `gear.py`
-(čelní ozubené kolo s otvorem pro hřídel).
+`modelgen/examples/`
+
+- `knob.py` — ovládací hvězdicové kolečko k rozkládacímu lehátku: 8 laloků,
+  uzavřené horní čelo, prstenec odlehčovacích kapes ze spodní strany a vnitřní
+  závit uprostřed.
+- `mug.py` — parametrický hrnek
+- `gear.py` — čelní ozubené kolo s otvorem pro hřídel
+
+### Kolečko k lehátku
+
+```bash
+python3 modelgen/cli.py knob \
+  --outer-d 60 --root-d 46 --knob-height 20 \
+  --pockets 7 --pocket-d 9 --pocket-circle-d 34 --pocket-depth 13 \
+  --thread-d 12 --pitch 1.75 --thread-depth 14 \
+  --out out/kolecko.stl --preview out/kolecko.png
+```
+
+**Výchozí rozměry jsou odhad z fotografie, ne měření.** Před tiskem je nutné
+změřit skutečný díl — hlavně velký průměr a stoupání závitu, průměr přes laloky
+a celkovou výšku — a předat je přepínači výše.
 
 ## Omezení
 
 - `extrude` a `revolve` triangulují víka vějířem ze středu, takže polygon musí
   být vůči svému těžišti hvězdicovitý. Obecné konkávní tvary potřebují
   plnohodnotnou triangulaci.
+- `extrude` zůstává pro rychlé konvexní tvary; obecné obrysy patří do `prism`.
+- Závit má rovné boky přes celou rozteč, ne normovaný profil s vrcholovým
+  úhlem 60° a zaoblením paty. Pro pohyblivý spoj je to dostatečné, ne však
+  pro díl přenášející jmenovité zatížení podle normy.
 - `extend` sítě jen spojí, neprovádí booleovské operace. Překrývající se tělesa
   (např. ucho hrnku) slicer sjednotí sám, ale odečítání není podporované —
   díry je potřeba modelovat rovnou, jako to dělá `ring_extrude`.

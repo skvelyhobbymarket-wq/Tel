@@ -12,7 +12,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "examples"))
 
 import primitives as p
+import triangulate as tri
+from knob import knob, star_outline
 from mesh import Mesh
+from thread import mouth_polygon, thread_radius
 
 
 def signed_volume(m: Mesh) -> float:
@@ -54,6 +57,13 @@ CLOSED_SOLIDS = {
     "ring_extrude": p.ring_extrude(
         [(2, 0), (0, 2), (-2, 0), (0, -2)], [(1, 0), (0, 1), (-1, 0), (0, -1)], 3),
     "gear": __import__("gear").gear(teeth=12),
+    "prism_two_holes": p.prism(
+        [(-5, -5), (5, -5), (5, 5), (-5, 5)],
+        [[(1 * math.cos(a) - 2.5, 1 * math.sin(a) - 2.5) for a in
+          [2 * math.pi * i / 16 for i in range(16)]],
+         [(1 * math.cos(a) + 2.5, 1 * math.sin(a) + 2.5) for a in
+          [2 * math.pi * i / 16 for i in range(16)]]], height=3),
+    "knob": knob(segments=32),
     "mug": __import__("mug").mug(),
 }
 
@@ -113,6 +123,108 @@ class TestTransforms(unittest.TestCase):
         merged = Mesh().extend(a).extend(b)
         self.assertEqual(len(merged.faces), len(a.faces) + len(b.faces))
         self.assertAlmostEqual(signed_volume(merged), 2.0, places=9)
+
+
+class TestTriangulate(unittest.TestCase):
+    """Triangulace musí zachovat plochu — to odhalí vynechaná i zdvojená ucha."""
+
+    @staticmethod
+    def _area(pts, tris):
+        return sum(tri._cross(pts[a], pts[b], pts[c]) / 2.0 for a, b, c in tris)
+
+    @staticmethod
+    def _circle(r, n, cx=0.0, cy=0.0):
+        return [(cx + r * math.cos(2 * math.pi * i / n),
+                 cy + r * math.sin(2 * math.pi * i / n)) for i in range(n)]
+
+    def test_square_without_holes(self):
+        pts, tris = tri.triangulate([(-5, -5), (5, -5), (5, 5), (-5, 5)])
+        self.assertEqual(len(tris), 2)
+        self.assertAlmostEqual(self._area(pts, tris), 100.0, places=9)
+
+    def test_area_with_holes(self):
+        outer = [(-5, -5), (5, -5), (5, 5), (-5, 5)]
+        holes = [self._circle(1, 24, -2.5, -2.5), self._circle(1, 24, 2.5, 2.5)]
+        pts, tris = tri.triangulate(outer, holes)
+        hole_area = 2 * tri.signed_area(holes[0])
+        self.assertAlmostEqual(self._area(pts, tris), 100.0 - hole_area, places=9)
+
+    def test_clockwise_input_is_normalised(self):
+        pts, tris = tri.triangulate([(-5, 5), (5, 5), (5, -5), (-5, -5)])
+        self.assertGreater(self._area(pts, tris), 0.0)
+
+    def test_concave_polygon(self):
+        # tvar písmene L, na který vějířová triangulace nestačí
+        poly = [(0, 0), (6, 0), (6, 2), (2, 2), (2, 6), (0, 6)]
+        pts, tris = tri.triangulate(poly)
+        self.assertAlmostEqual(self._area(pts, tris), 20.0, places=9)
+
+    def test_rejects_degenerate_input(self):
+        with self.assertRaises(ValueError):
+            tri.triangulate([(0, 0), (1, 1)])
+
+
+class TestThread(unittest.TestCase):
+    def test_profile_is_periodic_along_helix(self):
+        """Posun o jednu rozteč ve výšce musí dát stejný poloměr."""
+        for theta in (0.0, 1.0, 2.5):
+            for z in (0.0, 0.4, 3.1):
+                a = thread_radius(theta, z, 6.0, 1.75, 1.07)
+                b = thread_radius(theta, z + 1.75, 6.0, 1.75, 1.07)
+                self.assertAlmostEqual(a, b, places=9)
+
+    def test_profile_stays_within_bounds(self):
+        for i in range(200):
+            r = thread_radius(i * 0.31, i * 0.17, 6.0, 1.75, 1.07)
+            self.assertGreaterEqual(r, 6.0 - 1.07 - 1e-9)
+            self.assertLessEqual(r, 6.0 + 1e-9)
+
+    def test_mouth_matches_thread_at_z0(self):
+        poly = mouth_polygon(12.0, 1.75, segments=32)
+        for s, (x, y) in enumerate(poly):
+            theta = 2 * math.pi * s / 32
+            expected = thread_radius(theta, 0.0, 6.0, 1.75, 0.613 * 1.75)
+            self.assertAlmostEqual(math.hypot(x, y), expected, places=9)
+
+    def test_rejects_bad_parameters(self):
+        import thread as th
+        with self.assertRaises(ValueError):
+            th.threaded_hole(12.0, 0.0, 10.0)
+        with self.assertRaises(ValueError):
+            th.threaded_hole(2.0, 8.0, 10.0)
+
+
+class TestKnob(unittest.TestCase):
+    def test_outline_lobe_count(self):
+        """Počet lokálních maxim poloměru musí odpovídat počtu laloků."""
+        pts = star_outline(60.0, 46.0, lobes=8)
+        radii = [math.hypot(x, y) for x, y in pts]
+        peaks = sum(1 for i in range(len(radii))
+                    if radii[i] > radii[i - 1] and radii[i] >= radii[(i + 1) % len(radii)])
+        self.assertEqual(peaks, 8)
+        self.assertAlmostEqual(max(radii), 30.0, places=6)
+        self.assertAlmostEqual(min(radii), 23.0, places=6)
+
+    def test_pockets_do_not_break_through(self):
+        m = knob(segments=32, height=20.0, pocket_depth=13.0, thread_depth=14.0)
+        lo, hi = m.bounds()
+        self.assertAlmostEqual(hi[2] - lo[2], 20.0, places=6)
+
+    def test_rejects_pockets_deeper_than_body(self):
+        with self.assertRaises(ValueError):
+            knob(height=10.0, pocket_depth=12.0)
+        with self.assertRaises(ValueError):
+            knob(height=10.0, pocket_depth=5.0, thread_depth=11.0)
+
+    def test_rejects_pockets_colliding_with_thread(self):
+        with self.assertRaises(ValueError):
+            knob(pocket_circle_d=14.0, pocket_d=9.0, thread_d=12.0)
+
+    def test_pockets_and_thread_remove_material(self):
+        solid = knob(segments=32, pocket_d=0.6, thread_d=1.2, pitch=0.25,
+                     pocket_circle_d=34.0)
+        drilled = knob(segments=32)
+        self.assertLess(signed_volume(drilled), signed_volume(solid))
 
 
 class TestExamples(unittest.TestCase):
