@@ -58,8 +58,8 @@ takže jde tvar zkontrolovat bez sliceru.
 `modelgen/examples/`
 
 - `knob.py` — ovládací hvězdicové kolečko k rozkládacímu lehátku: 8 laloků,
-  uzavřené horní čelo, prstenec odlehčovacích kapes ze spodní strany a vnitřní
-  závit uprostřed.
+  uzavřené horní čelo s vystouplým pohledovým kotoučkem, prstenec odlehčovacích
+  kapes ze spodní strany a vnitřní závit uprostřed.
 - `mug.py` — parametrický hrnek
 - `gear.py` — čelní ozubené kolo s otvorem pro hřídel
 
@@ -70,12 +70,17 @@ python3 modelgen/cli.py knob \
   --outer-d 60 --root-d 46 --knob-height 20 \
   --pockets 7 --pocket-d 9 --pocket-circle-d 34 --pocket-depth 13 \
   --thread-d 12 --pitch 1.75 --thread-depth 14 \
+  --cap-d 42 --cap-h 1.5 \
   --out out/kolecko.stl --preview out/kolecko.png
 ```
 
 **Výchozí rozměry jsou odhad z fotografie, ne měření.** Před tiskem je nutné
 změřit skutečný díl — hlavně velký průměr a stoupání závitu, průměr přes laloky
 a celkovou výšku — a předat je přepínači výše.
+
+Vystouplý kotouček na pohledové straně (`--cap-d`, `--cap-h`) je čistě
+designový prvek; `--cap-h 0` ho vypne a čelo zůstane ploché. Celková výška
+dílu je `--knob-height` plus `--cap-h`.
 
 ## Omezení
 

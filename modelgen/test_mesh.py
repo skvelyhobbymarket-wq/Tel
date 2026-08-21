@@ -206,9 +206,12 @@ class TestKnob(unittest.TestCase):
         self.assertAlmostEqual(min(radii), 23.0, places=6)
 
     def test_pockets_do_not_break_through(self):
-        m = knob(segments=32, height=20.0, pocket_depth=13.0, thread_depth=14.0)
+        """Kapsy ani závit nesmí prorazit horní čelo — tělo si drží svou výšku."""
+        m = knob(segments=32, height=20.0, pocket_depth=13.0, thread_depth=14.0, cap_h=0.0)
         lo, hi = m.bounds()
         self.assertAlmostEqual(hi[2] - lo[2], 20.0, places=6)
+        # žádný vrchol nesmí ležet nad horním čelem
+        self.assertLessEqual(max(v[2] for v in m.vertices), 20.0 + 1e-9)
 
     def test_rejects_pockets_deeper_than_body(self):
         with self.assertRaises(ValueError):
@@ -219,6 +222,30 @@ class TestKnob(unittest.TestCase):
     def test_rejects_pockets_colliding_with_thread(self):
         with self.assertRaises(ValueError):
             knob(pocket_circle_d=14.0, pocket_d=9.0, thread_d=12.0)
+
+    def test_raised_cap_adds_its_own_volume(self):
+        """Kotouček na pohledové straně musí přidat právě objem svého válce."""
+        flat = knob(segments=64, cap_h=0.0)
+        domed = knob(segments=64, cap_d=42.0, cap_h=1.5)
+        expected = math.pi * 21.0 ** 2 * 1.5
+        self.assertAlmostEqual(signed_volume(domed) - signed_volume(flat),
+                               expected, delta=0.01 * expected)
+
+    def test_raised_cap_extends_total_height(self):
+        m = knob(segments=32, height=20.0, cap_h=1.5)
+        lo, hi = m.bounds()
+        self.assertAlmostEqual(hi[2] - lo[2], 21.5, places=6)
+
+    def test_cap_can_be_switched_off(self):
+        m = knob(segments=32, height=20.0, cap_h=0.0)
+        lo, hi = m.bounds()
+        self.assertAlmostEqual(hi[2] - lo[2], 20.0, places=6)
+
+    def test_rejects_cap_wider_than_root(self):
+        with self.assertRaises(ValueError):
+            knob(root_d=46.0, cap_d=50.0, cap_h=1.5)
+        with self.assertRaises(ValueError):
+            knob(cap_h=-1.0)
 
     def test_pockets_and_thread_remove_material(self):
         solid = knob(segments=32, pocket_d=0.6, thread_d=1.2, pitch=0.25,

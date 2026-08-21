@@ -26,7 +26,8 @@ def build(args) -> "primitives.Mesh":
         return knob(outer_d=args.outer_d, root_d=args.root_d, height=args.knob_height,
                     pockets=args.pockets, pocket_d=args.pocket_d,
                     pocket_circle_d=args.pocket_circle_d, pocket_depth=args.pocket_depth,
-                    thread_d=args.thread_d, pitch=args.pitch, thread_depth=args.thread_depth)
+                    thread_d=args.thread_d, pitch=args.pitch, thread_depth=args.thread_depth,
+                    cap_d=args.cap_d, cap_h=args.cap_h)
     if args.shape == "mug":
         return mug(height=args.height, radius=args.radius)
     if args.shape == "gear":
@@ -64,6 +65,10 @@ def main(argv=None) -> int:
     knob_group.add_argument("--thread-d", type=float, default=12.0, help="velký průměr závitu")
     knob_group.add_argument("--pitch", type=float, default=1.75, help="stoupání závitu")
     knob_group.add_argument("--thread-depth", type=float, default=14.0, help="hloubka díry")
+    knob_group.add_argument("--cap-d", type=float, default=42.0,
+                            help="průměr vystouplého kotoučku na pohledové straně")
+    knob_group.add_argument("--cap-h", type=float, default=1.5,
+                            help="o kolik kotouček vystupuje; 0 = ploché čelo")
     p.add_argument("--preview", default=None, help="vykreslit náhled do PNG")
     args = p.parse_args(argv)
 
