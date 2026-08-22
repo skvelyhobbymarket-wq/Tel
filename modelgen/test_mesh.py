@@ -197,25 +197,26 @@ class TestThread(unittest.TestCase):
 class TestKnob(unittest.TestCase):
     def test_outline_lobe_count(self):
         """Počet lokálních maxim poloměru musí odpovídat počtu laloků."""
-        pts = star_outline(60.0, 46.0, lobes=8)
+        pts = star_outline(75.0, 57.5, lobes=8)
         radii = [math.hypot(x, y) for x, y in pts]
         peaks = sum(1 for i in range(len(radii))
                     if radii[i] > radii[i - 1] and radii[i] >= radii[(i + 1) % len(radii)])
         self.assertEqual(peaks, 8)
-        self.assertAlmostEqual(max(radii), 30.0, places=6)
-        self.assertAlmostEqual(min(radii), 23.0, places=6)
+        self.assertAlmostEqual(max(radii), 37.5, places=6)
+        self.assertAlmostEqual(min(radii), 28.75, places=6)
 
     def test_pockets_do_not_break_through(self):
         """Kapsy ani závit nesmí prorazit horní čelo — tělo si drží svou výšku."""
-        m = knob(segments=32, height=20.0, pocket_depth=13.0, thread_depth=14.0, cap_h=0.0)
+        m = knob(segments=32, height=26.0, pocket_depth=22.0, thread_depth=22.0,
+                 recess_depth=0.0)
         lo, hi = m.bounds()
-        self.assertAlmostEqual(hi[2] - lo[2], 20.0, places=6)
+        self.assertAlmostEqual(hi[2] - lo[2], 26.0, places=6)
         # žádný vrchol nesmí ležet nad horním čelem
-        self.assertLessEqual(max(v[2] for v in m.vertices), 20.0 + 1e-9)
+        self.assertLessEqual(max(v[2] for v in m.vertices), 26.0 + 1e-9)
 
     def test_rejects_pockets_deeper_than_body(self):
         with self.assertRaises(ValueError):
-            knob(height=10.0, pocket_depth=12.0)
+            knob(height=10.0, pocket_depth=12.0, thread_depth=5.0)
         with self.assertRaises(ValueError):
             knob(height=10.0, pocket_depth=5.0, thread_depth=11.0)
 
@@ -223,29 +224,46 @@ class TestKnob(unittest.TestCase):
         with self.assertRaises(ValueError):
             knob(pocket_circle_d=14.0, pocket_d=9.0, thread_d=12.0)
 
-    def test_raised_cap_adds_its_own_volume(self):
-        """Kotouček na pohledové straně musí přidat právě objem svého válce."""
-        flat = knob(segments=64, cap_h=0.0)
-        domed = knob(segments=64, cap_d=42.0, cap_h=1.5)
-        expected = math.pi * 21.0 ** 2 * 1.5
-        self.assertAlmostEqual(signed_volume(domed) - signed_volume(flat),
+    def test_recess_removes_its_own_volume(self):
+        """Vybrání na pohledové straně musí ubrat právě objem svého válce."""
+        flat = knob(segments=64, recess_depth=0.0)
+        dished = knob(segments=64, recess_d=52.5, recess_depth=1.5, dot_depth=0.0)
+        expected = math.pi * 26.25 ** 2 * 1.5
+        self.assertAlmostEqual(signed_volume(flat) - signed_volume(dished),
                                expected, delta=0.01 * expected)
 
-    def test_raised_cap_extends_total_height(self):
-        m = knob(segments=32, height=20.0, cap_h=1.5)
-        lo, hi = m.bounds()
-        self.assertAlmostEqual(hi[2] - lo[2], 21.5, places=6)
+    def test_dot_removes_its_own_volume(self):
+        plain = knob(segments=64, dot_depth=0.0)
+        dotted = knob(segments=64, dot_d=2.4, dot_depth=0.8)
+        expected = math.pi * 1.2 ** 2 * 0.8
+        self.assertAlmostEqual(signed_volume(plain) - signed_volume(dotted),
+                               expected, delta=0.05 * expected)
 
-    def test_cap_can_be_switched_off(self):
-        m = knob(segments=32, height=20.0, cap_h=0.0)
-        lo, hi = m.bounds()
-        self.assertAlmostEqual(hi[2] - lo[2], 20.0, places=6)
+    def test_recess_does_not_change_total_height(self):
+        """Vybrání je zapuštěné, takže obrys dílu musí zůstat stejně vysoký."""
+        for kw in ({}, {"recess_depth": 0.0}, {"dot_depth": 0.0}):
+            with self.subTest(**kw):
+                lo, hi = knob(segments=32, height=26.0, **kw).bounds()
+                self.assertAlmostEqual(hi[2] - lo[2], 26.0, places=6)
 
-    def test_rejects_cap_wider_than_root(self):
+    def test_rejects_bad_recess(self):
         with self.assertRaises(ValueError):
-            knob(root_d=46.0, cap_d=50.0, cap_h=1.5)
+            knob(root_d=46.0, recess_d=50.0, recess_depth=1.5)
         with self.assertRaises(ValueError):
-            knob(cap_h=-1.0)
+            knob(recess_depth=-1.0)
+        with self.assertRaises(ValueError):
+            knob(recess_d=40.0, dot_d=42.0, dot_depth=0.5)
+
+    def test_rejects_recess_meeting_the_pockets(self):
+        """Mezi dnem vybrání a stropem kapes musí zůstat materiál."""
+        with self.assertRaises(ValueError):
+            knob(height=20.0, pocket_depth=19.0, thread_depth=19.0, recess_depth=1.5)
+
+    def test_thread_defaults_to_m24(self):
+        m = knob(segments=32)
+        radii = [math.hypot(v[0], v[1]) for v in m.vertices
+                 if 0.0 < v[2] < 1.0 and math.hypot(v[0], v[1]) < 13.0]
+        self.assertAlmostEqual(max(radii), 12.0, places=6)
 
     def test_pockets_and_thread_remove_material(self):
         solid = knob(segments=32, pocket_d=0.6, thread_d=1.2, pitch=0.25,

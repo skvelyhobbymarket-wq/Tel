@@ -27,7 +27,8 @@ def build(args) -> "primitives.Mesh":
                     pockets=args.pockets, pocket_d=args.pocket_d,
                     pocket_circle_d=args.pocket_circle_d, pocket_depth=args.pocket_depth,
                     thread_d=args.thread_d, pitch=args.pitch, thread_depth=args.thread_depth,
-                    cap_d=args.cap_d, cap_h=args.cap_h)
+                    recess_d=args.recess_d, recess_depth=args.recess_depth,
+                    dot_d=args.dot_d, dot_depth=args.dot_depth)
     if args.shape == "mug":
         return mug(height=args.height, radius=args.radius)
     if args.shape == "gear":
@@ -55,20 +56,25 @@ def main(argv=None) -> int:
     p.add_argument("--thickness", type=float, default=8.0)
     p.add_argument("--bore", type=float, default=8.0)
     knob_group = p.add_argument_group("kolečko (knob), rozměry v mm")
-    knob_group.add_argument("--outer-d", type=float, default=60.0, help="průměr přes laloky")
-    knob_group.add_argument("--root-d", type=float, default=46.0, help="průměr v zářezech")
-    knob_group.add_argument("--knob-height", type=float, default=20.0)
+    knob_group.add_argument("--outer-d", type=float, default=75.0, help="průměr přes laloky")
+    knob_group.add_argument("--root-d", type=float, default=57.5, help="průměr v zářezech")
+    knob_group.add_argument("--knob-height", type=float, default=26.0,
+                            help="výška těla hvězdice; musí být větší než --thread-depth")
     knob_group.add_argument("--pockets", type=int, default=7)
-    knob_group.add_argument("--pocket-d", type=float, default=9.0)
-    knob_group.add_argument("--pocket-circle-d", type=float, default=34.0)
-    knob_group.add_argument("--pocket-depth", type=float, default=13.0)
-    knob_group.add_argument("--thread-d", type=float, default=12.0, help="velký průměr závitu")
-    knob_group.add_argument("--pitch", type=float, default=1.75, help="stoupání závitu")
-    knob_group.add_argument("--thread-depth", type=float, default=14.0, help="hloubka díry")
-    knob_group.add_argument("--cap-d", type=float, default=42.0,
-                            help="průměr vystouplého kotoučku na pohledové straně")
-    knob_group.add_argument("--cap-h", type=float, default=1.5,
-                            help="o kolik kotouček vystupuje; 0 = ploché čelo")
+    knob_group.add_argument("--pocket-d", type=float, default=9.4)
+    knob_group.add_argument("--pocket-circle-d", type=float, default=40.0)
+    knob_group.add_argument("--pocket-depth", type=float, default=22.0)
+    knob_group.add_argument("--thread-d", type=float, default=24.0, help="velký průměr závitu")
+    knob_group.add_argument("--pitch", type=float, default=3.0, help="stoupání závitu")
+    knob_group.add_argument("--thread-depth", type=float, default=22.0, help="hloubka díry")
+    knob_group.add_argument("--recess-d", type=float, default=52.5,
+                            help="průměr zapuštěného kotouče na pohledové straně")
+    knob_group.add_argument("--recess-depth", type=float, default=1.5,
+                            help="hloubka vybrání; 0 = ploché čelo")
+    knob_group.add_argument("--dot-d", type=float, default=2.4,
+                            help="průměr tečky uprostřed vybrání")
+    knob_group.add_argument("--dot-depth", type=float, default=0.8,
+                            help="hloubka tečky; 0 = hladké dno")
     p.add_argument("--preview", default=None, help="vykreslit náhled do PNG")
     args = p.parse_args(argv)
 

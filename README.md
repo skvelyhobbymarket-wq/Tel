@@ -58,8 +58,8 @@ takže jde tvar zkontrolovat bez sliceru.
 `modelgen/examples/`
 
 - `knob.py` — ovládací hvězdicové kolečko k rozkládacímu lehátku: 8 laloků,
-  uzavřené horní čelo s vystouplým pohledovým kotoučkem, prstenec odlehčovacích
-  kapes ze spodní strany a vnitřní závit uprostřed.
+  uzavřené horní čelo se zapuštěným pohledovým kotoučem a tečkou uprostřed,
+  prstenec odlehčovacích kapes ze spodní strany a vnitřní závit M24.
 - `mug.py` — parametrický hrnek
 - `gear.py` — čelní ozubené kolo s otvorem pro hřídel
 
@@ -67,20 +67,22 @@ takže jde tvar zkontrolovat bez sliceru.
 
 ```bash
 python3 modelgen/cli.py knob \
-  --outer-d 60 --root-d 46 --knob-height 20 \
-  --pockets 7 --pocket-d 9 --pocket-circle-d 34 --pocket-depth 13 \
-  --thread-d 12 --pitch 1.75 --thread-depth 14 \
-  --cap-d 42 --cap-h 1.5 \
+  --outer-d 75 --root-d 57.5 --knob-height 26 \
+  --pockets 7 --pocket-d 9.4 --pocket-circle-d 40 --pocket-depth 22 \
+  --thread-d 24 --pitch 3.0 --thread-depth 22 \
+  --recess-d 52.5 --recess-depth 1.5 --dot-d 2.4 --dot-depth 0.8 \
   --out out/kolecko.stl --preview out/kolecko.png
 ```
 
-**Výchozí rozměry jsou odhad z fotografie, ne měření.** Před tiskem je nutné
-změřit skutečný díl — hlavně velký průměr a stoupání závitu, průměr přes laloky
-a celkovou výšku — a předat je přepínači výše.
+Změřené na dílu: průměr přes cípy hvězdy 75 mm, závit M24 (stoupání 3,0),
+hloubka závitu i kapes 22 mm, průměr kapes 9,4 mm.
 
-Vystouplý kotouček na pohledové straně (`--cap-d`, `--cap-h`) je čistě
-designový prvek; `--cap-h 0` ho vypne a čelo zůstane ploché. Celková výška
-dílu je `--knob-height` plus `--cap-h`.
+Odhadnuté a zatím neověřené: výška těla (26 mm — musí být větší než hloubka
+závitu), průměr v zářezech, rozteč kapes, průměr a hloubka vybrání i tečky.
+
+Zapuštěný kotouč na pohledové straně (`--recess-d`, `--recess-depth`) a tečka
+uprostřed (`--dot-d`, `--dot-depth`) jsou čistě designové; nulová hloubka je
+vypne. Celková výška dílu je `--knob-height`, vybrání ji nemění.
 
 ## Omezení
 

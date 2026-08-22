@@ -50,16 +50,18 @@ def _wall(mesh: Mesh, loop, z0: float, z1: float) -> None:
         mesh.add_quad(b[i], b[j], t[j], t[i])
 
 
-def knob(outer_d: float = 60.0, root_d: float = 46.0, height: float = 20.0,
-         lobes: int = 8, pockets: int = 7, pocket_d: float = 9.0,
-         pocket_circle_d: float = 34.0, pocket_depth: float = 13.0,
-         thread_d: float = 12.0, pitch: float = 1.75, thread_depth: float = 14.0,
-         cap_d: float = 42.0, cap_h: float = 1.5, segments: int = 64) -> Mesh:
+def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
+         lobes: int = 8, pockets: int = 7, pocket_d: float = 9.4,
+         pocket_circle_d: float = 40.0, pocket_depth: float = 22.0,
+         thread_d: float = 24.0, pitch: float = 3.0, thread_depth: float = 22.0,
+         recess_d: float = 52.5, recess_depth: float = 1.5,
+         dot_d: float = 2.4, dot_depth: float = 0.8, segments: int = 64) -> Mesh:
     """Sestaví kolečko jako jedno vodotěsné těleso. Spodní čelo leží v z=0.
 
-    `cap_d` a `cap_h` popisují vystouplý kruhový kotouček na pohledové straně.
-    Je čistě pohledový, takže `cap_h=0` ho vypne. Celková výška dílu je pak
-    `height + cap_h`.
+    Pohledová strana není plochá: je v ní kruhové vybrání (`recess_d`,
+    `recess_depth`) a uprostřed jeho dna malý důlek (`dot_d`, `dot_depth`).
+    Obojí je čistě pohledové — nulová hloubka příslušný prvek vypne.
+    Celková výška dílu zůstává `height`.
     """
     if pocket_depth >= height or thread_depth >= height:
         raise ValueError("kapsy ani závit nesmí prorazit horní čelo")
@@ -67,10 +69,15 @@ def knob(outer_d: float = 60.0, root_d: float = 46.0, height: float = 20.0,
         raise ValueError("kapsy zasahují mimo patu laloků")
     if pocket_circle_d / 2.0 - pocket_d / 2.0 <= thread_d / 2.0:
         raise ValueError("kapsy zasahují do závitu")
-    if cap_h < 0:
-        raise ValueError("výška kotoučku nesmí být záporná")
-    if cap_h > 0 and cap_d >= root_d:
-        raise ValueError("kotouček musí být menší než průměr v zářezech")
+    if recess_depth < 0 or dot_depth < 0:
+        raise ValueError("hloubka vybrání ani důlku nesmí být záporná")
+    if recess_depth > 0 and recess_d >= root_d:
+        raise ValueError("vybrání musí být menší než průměr v zářezech")
+    if dot_depth > 0 and recess_depth > 0 and dot_d >= recess_d:
+        raise ValueError("důlek musí být menší než vybrání")
+    # Vybrání shora a kapsy zdola si nesmí prorazit navzájem.
+    if height - recess_depth - dot_depth <= max(pocket_depth, thread_depth):
+        raise ValueError("vybrání a kapsy se protínají — chybí materiál mezi nimi")
 
     outline = star_outline(outer_d, root_d, lobes)
     mouth = mouth_polygon(thread_d, pitch, segments=segments)
@@ -83,12 +90,21 @@ def knob(outer_d: float = 60.0, root_d: float = 46.0, height: float = 20.0,
     _cap(m, outline, pocket_loops + [mouth], 0.0, up=False)   # spodní čelo s otvory
     _wall(m, outline, 0.0, height)                            # obvod hvězdice
 
-    if cap_h > 0:
-        # Pohledový kotouček: čelo hvězdice je mezikruží, kotouček z něj vystupuje.
-        cap_loop = _circle(cap_d / 2.0, segments)
-        _cap(m, outline, [cap_loop], height, up=True)
-        _wall(m, cap_loop, height, height + cap_h)
-        _cap(m, cap_loop, None, height + cap_h, up=True)
+    if recess_depth > 0:
+        # Pohledové vybrání: čelo hvězdice je mezikruží, kotouč je zapuštěný.
+        recess_loop = _circle(recess_d / 2.0, segments)
+        floor_z = height - recess_depth
+        _cap(m, outline, [recess_loop], height, up=True)      # obruba kolem vybrání
+        _wall(m, list(reversed(recess_loop)), floor_z, height)  # stěna vybrání, normála dovnitř
+
+        if dot_depth > 0:
+            # Důlek uprostřed dna vybrání.
+            dot_loop = _circle(dot_d / 2.0, max(12, segments // 4))
+            _cap(m, recess_loop, [dot_loop], floor_z, up=True)
+            _wall(m, list(reversed(dot_loop)), floor_z - dot_depth, floor_z)
+            _cap(m, dot_loop, None, floor_z - dot_depth, up=True)
+        else:
+            _cap(m, recess_loop, None, floor_z, up=True)      # hladké dno vybrání
     else:
         _cap(m, outline, None, height, up=True)               # ploché horní čelo
 
