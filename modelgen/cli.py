@@ -29,7 +29,8 @@ def build(args) -> "primitives.Mesh":
                     thread_d=args.thread_d, pitch=args.pitch, thread_depth=args.thread_depth,
                     recess_d=args.recess_d, recess_depth=args.recess_depth,
                     dot_d=args.dot_d, dot_depth=args.dot_depth,
-                    boss_d=args.boss_d, boss_h=args.boss_h)
+                    boss_d=args.boss_d, boss_h=args.boss_h,
+                    edge_r=args.edge_r, ring_w=args.ring_w, ring_depth=args.ring_depth)
     if args.shape == "mug":
         return mug(height=args.height, radius=args.radius)
     if args.shape == "gear":
@@ -63,7 +64,7 @@ def main(argv=None) -> int:
                             help="výška těla hvězdice, bez nálitku")
     knob_group.add_argument("--pockets", type=int, default=8)
     knob_group.add_argument("--pocket-d", type=float, default=9.4)
-    knob_group.add_argument("--pocket-circle-d", type=float, default=55.0)
+    knob_group.add_argument("--pocket-circle-d", type=float, default=52.0)
     knob_group.add_argument("--pocket-depth", type=float, default=22.0)
     knob_group.add_argument("--thread-d", type=float, default=24.0, help="velký průměr závitu")
     knob_group.add_argument("--pitch", type=float, default=3.0, help="stoupání závitu")
@@ -76,10 +77,16 @@ def main(argv=None) -> int:
                             help="průměr tečky uprostřed vybrání")
     knob_group.add_argument("--dot-depth", type=float, default=0.8,
                             help="hloubka tečky; 0 = hladké dno")
-    knob_group.add_argument("--boss-d", type=float, default=42.0,
+    knob_group.add_argument("--boss-d", type=float, default=38.0,
                             help="průměr závitového nálitku pod tělem")
     knob_group.add_argument("--boss-h", type=float, default=4.0,
                             help="o kolik nálitek vystupuje pod tělo hvězdice")
+    knob_group.add_argument("--edge-r", type=float, default=1.5,
+                            help="poloměr zaoblení obvodových hran; 0 = ostrá hrana")
+    knob_group.add_argument("--ring-w", type=float, default=1.0,
+                            help="šířka prstence kolem kapes")
+    knob_group.add_argument("--ring-depth", type=float, default=1.0,
+                            help="hloubka prstence; 0 = bez prstence")
     p.add_argument("--preview", default=None, help="vykreslit náhled do PNG")
     args = p.parse_args(argv)
 

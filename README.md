@@ -44,7 +44,8 @@ model.write_stl("out/podstavec.stl")
 | `revolve(profile, segments)` | rotace profilu `[(r, z), ...]` kolem osy z |
 | `prism(outer, holes, h)` | vytažení obecného (i konkávního) obrysu s otvory |
 
-`modelgen/triangulate.py` — triangulace polygonu s otvory ořezáváním uší.
+`modelgen/triangulate.py` — triangulace polygonu s otvory ořezáváním uší,
+plus `offset_polygon()` (odsazení obrysu podél normál) a `is_simple()`.
 Můstky k otvorům se hledají Eberlyho postupem a otvory se zpracovávají seřazené
 podle nejpravějšího bodu; bez toho se při hustším dělení zamotají do sebe.
 
@@ -70,10 +71,10 @@ takže jde tvar zkontrolovat bez sliceru.
 ```bash
 python3 modelgen/cli.py knob \
   --outer-d 75 --root-d 57.5 --knob-height 26 \
-  --pockets 8 --pocket-d 9.4 --pocket-circle-d 55 --pocket-depth 22 \
+  --pockets 8 --pocket-d 9.4 --pocket-circle-d 52 --pocket-depth 22 \
   --thread-d 24 --pitch 3.0 --thread-depth 22 \
   --recess-d 52.5 --recess-depth 1.5 --dot-d 2.4 --dot-depth 0.8 \
-  --boss-d 42 --boss-h 4 \
+  --boss-d 38 --boss-h 4 --edge-r 1.5 --ring-w 1 --ring-depth 1 \
   --out out/kolecko.stl --preview out/kolecko.png
 ```
 
@@ -81,8 +82,14 @@ Změřené na dílu: průměr přes cípy hvězdy 75 mm, závit M24 (stoupání 
 hloubka závitu i kapes 22 mm, průměr kapes 9,4 mm, výška těla hvězdice 26 mm
 a celková výška 30 mm — závitový nálitek tedy vystupuje 4 mm pod tělo.
 
-Odhadnuté a zatím neověřené: průměr v zářezech, rozteč kapes (55 mm), průměr
-nálitku (42 mm), průměr a hloubka vybrání i tečky.
+Odhadnuté a zatím neověřené: průměr v zářezech, rozteč kapes (52 mm), průměr
+nálitku (38 mm), zaoblení obvodu (1,5 mm), prstence kolem kapes a rozměry
+vybrání i tečky.
+
+Tyhle odhady se navzájem svírají: nálitek, prstenec kolem kapsy, zaoblení a
+minimální stěna si dělí mezikruží mezi závitem a obvodem. Při nálitku ø41 se
+zaoblením 2,5 mm už neprojde žádná rozteč — model to odmítne místo aby
+vyrobil nepoužitelný díl.
 
 Kapes je osm a leží ve špičkách cípů. Kontrola vůle je proto vedená vůči
 skutečnému poloměru obrysu v místě kapsy, ne vůči poloměru paty zářezů —

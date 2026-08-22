@@ -13,7 +13,7 @@ import math
 
 from mesh import Mesh
 from thread import mouth_polygon, threaded_hole
-from triangulate import triangulate
+from triangulate import is_simple, offset_polygon, triangulate
 
 
 def star_outline(outer_d: float, root_d: float, lobes: int = 8,
@@ -57,14 +57,57 @@ def _wall(mesh: Mesh, loop, z0: float, z1: float) -> None:
         mesh.add_quad(b[i], b[j], t[j], t[i])
 
 
+def _skin(mesh: Mesh, levels: list[tuple[list[tuple[float, float]], float]]) -> None:
+    """Plášť z posloupnosti obrysů v jednotlivých výškách, normálou ven."""
+    rings = [[mesh.add_vertex(x, y, z) for x, y in loop] for loop, z in levels]
+    n = len(rings[0])
+    for a in range(len(rings) - 1):
+        for i in range(n):
+            j = (i + 1) % n
+            mesh.add_quad(rings[a][i], rings[a][j], rings[a + 1][j], rings[a + 1][i])
+
+
+def _fillet_levels(outline: list[tuple[float, float]], height: float,
+                   edge_r: float, steps: int) -> list[tuple[list[tuple[float, float]], float]]:
+    """Obrysy pláště: dole čtvrtkružnice ven, uprostřed rovně, nahoře zpět dovnitř.
+
+    V každé výšce je obrys odsazený dovnitř o `delta`, takže hrana opisuje
+    čtvrtkružnici o poloměru `edge_r`.
+    """
+    if edge_r <= 0:
+        return [(outline, 0.0), (outline, height)]
+
+    cache: dict[float, list[tuple[float, float]]] = {}
+
+    def at(delta: float) -> list[tuple[float, float]]:
+        key = round(delta, 9)
+        if key not in cache:
+            loop = outline if key == 0.0 else offset_polygon(outline, key)
+            if not is_simple(loop):
+                raise ValueError("zaoblení je větší než poloměr křivosti obrysu")
+            cache[key] = loop
+        return cache[key]
+
+    levels = []
+    for k in range(steps + 1):                      # spodní zaoblení
+        t = math.pi / 2 * k / steps
+        levels.append((at(edge_r * (1 - math.sin(t))), edge_r * (1 - math.cos(t))))
+    for k in range(steps + 1):                      # horní zaoblení
+        t = math.pi / 2 * (steps - k) / steps
+        levels.append((at(edge_r * (1 - math.sin(t))), height - edge_r * (1 - math.cos(t))))
+    return levels
+
+
 def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
          lobes: int = 8, pockets: int = 8, pocket_d: float = 9.4,
-         pocket_circle_d: float = 55.0, pocket_depth: float = 22.0,
+         pocket_circle_d: float = 52.0, pocket_depth: float = 22.0,
          thread_d: float = 24.0, pitch: float = 3.0, thread_depth: float = 22.0,
          recess_d: float = 52.5, recess_depth: float = 1.5,
          dot_d: float = 2.4, dot_depth: float = 0.8,
-         boss_d: float = 42.0, boss_h: float = 4.0, min_wall: float = 0.8,
-         segments: int = 64) -> Mesh:
+         boss_d: float = 38.0, boss_h: float = 4.0,
+         edge_r: float = 1.5, edge_segments: int = 6,
+         ring_w: float = 1.0, ring_depth: float = 1.0,
+         min_wall: float = 0.8, segments: int = 64) -> Mesh:
     """Sestaví kolečko jako jedno vodotěsné těleso. Nejnižší bod leží v z=0.
 
     Pohledová strana není plochá: je v ní kruhové vybrání (`recess_d`,
@@ -72,12 +115,23 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
     Obojí je čistě pohledové — nulová hloubka příslušný prvek vypne.
     Závitový nálitek (`boss_d`, `boss_h`) vystupuje pod tělo hvězdice, takže
     celková výška dílu je `height + boss_h`. Závit začíná na čele nálitku.
+
+    Obvodové hrany jsou zaoblené poloměrem `edge_r` (nula = ostrá hrana) a
+    kolem každé kapsy je mělký prstenec široký `ring_w` a hluboký `ring_depth`
+    (nulová šířka nebo hloubka ho vypne).
     """
+    if edge_r < 0 or ring_w < 0 or ring_depth < 0:
+        raise ValueError("zaoblení ani prstenec nesmí mít záporný rozměr")
+    if 2 * edge_r > height:
+        raise ValueError("zaoblení obou hran je vyšší než tělo")
+    if ring_depth > 0 and ring_depth >= pocket_depth:
+        raise ValueError("prstenec je hlubší než kapsa")
     if boss_h < 0:
         raise ValueError("výška nálitku nesmí být záporná")
     if boss_h > 0 and boss_d <= thread_d:
         raise ValueError("nálitek musí být širší než závit")
-    if boss_h > 0 and boss_d / 2.0 > pocket_circle_d / 2.0 - pocket_d / 2.0 - min_wall:
+    if boss_h > 0 and boss_d / 2.0 > (pocket_circle_d / 2.0 - pocket_d / 2.0
+                                      - (ring_w if ring_depth > 0 else 0.0) - min_wall):
         raise ValueError(
             f"mezi nálitkem a kapsami by zbylo méně než {min_wall} mm materiálu")
     if pocket_depth >= height:
@@ -90,13 +144,15 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
         a = 2 * math.pi * i / pockets
         cx = pocket_circle_d / 2.0 * math.cos(a)
         cy = pocket_circle_d / 2.0 * math.sin(a)
-        # nejtěsnější místo hledej po obvodu kapsy, ne jen v jejím středu
+        # nejtěsnější místo hledej po obvodu prstence, ne jen ve středu kapsy
+        rim = pocket_d / 2.0 + (ring_w if ring_depth > 0 else 0.0)
         for k in range(72):
             b = 2 * math.pi * k / 72
-            px = cx + pocket_d / 2.0 * math.cos(b)
-            py = cy + pocket_d / 2.0 * math.sin(b)
+            px, py = cx + rim * math.cos(b), cy + rim * math.sin(b)
             r = math.hypot(px, py)
-            if r + min_wall >= outline_radius(math.atan2(py, px), outer_d, root_d, lobes):
+            # čelo je kvůli zaoblení zataženo o edge_r dovnitř
+            limit = outline_radius(math.atan2(py, px), outer_d, root_d, lobes) - edge_r
+            if r + min_wall >= limit:
                 raise ValueError(
                     f"kapsa {i + 1} se přibližuje k obvodu na méně než {min_wall} mm")
     if pocket_circle_d / 2.0 - pocket_d / 2.0 - min_wall <= thread_d / 2.0:
@@ -114,30 +170,40 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
 
     outline = star_outline(outer_d, root_d, lobes)
     mouth = mouth_polygon(thread_d, pitch, segments=segments)
-    pocket_loops = [_circle(pocket_d / 2.0, segments // 2,
-                            pocket_circle_d / 2.0 * math.cos(2 * math.pi * i / pockets),
-                            pocket_circle_d / 2.0 * math.sin(2 * math.pi * i / pockets))
-                    for i in range(pockets)]
+    pocket_centers = [(pocket_circle_d / 2.0 * math.cos(2 * math.pi * i / pockets),
+                       pocket_circle_d / 2.0 * math.sin(2 * math.pi * i / pockets))
+                      for i in range(pockets)]
+    pocket_loops = [_circle(pocket_d / 2.0, segments // 2, cx, cy)
+                    for cx, cy in pocket_centers]
+
+    face = offset_polygon(outline, edge_r) if edge_r > 0 else outline
+    if edge_r > 0 and not is_simple(face):
+        raise ValueError("zaoblení je větší než poloměr křivosti obrysu")
 
     m = Mesh()
-    _wall(m, outline, 0.0, height)                            # obvod hvězdice
+    _skin(m, _fillet_levels(outline, height, edge_r, edge_segments))
+
+    # Kolem každé kapsy mělký prstenec; kapsa pak pokračuje z jeho dna.
+    ringed = ring_depth > 0 and ring_w > 0
+    mouths = [_circle(pocket_d / 2.0 + ring_w, segments // 2, cx, cy)
+              for cx, cy in pocket_centers] if ringed else pocket_loops
 
     if boss_h > 0:
         # Závitový nálitek vystupuje pod tělo; závit ústí až na jeho čele.
         boss_loop = _circle(boss_d / 2.0, segments)
-        _cap(m, outline, pocket_loops + [boss_loop], 0.0, up=False)
+        _cap(m, face, mouths + [boss_loop], 0.0, up=False)
         _wall(m, boss_loop, -boss_h, 0.0)
         _cap(m, boss_loop, [mouth], -boss_h, up=False)
         thread_z0 = -boss_h
     else:
-        _cap(m, outline, pocket_loops + [mouth], 0.0, up=False)
+        _cap(m, face, mouths + [mouth], 0.0, up=False)
         thread_z0 = 0.0
 
     if recess_depth > 0:
         # Pohledové vybrání: čelo hvězdice je mezikruží, kotouč je zapuštěný.
         recess_loop = _circle(recess_d / 2.0, segments)
         floor_z = height - recess_depth
-        _cap(m, outline, [recess_loop], height, up=True)      # obruba kolem vybrání
+        _cap(m, face, [recess_loop], height, up=True)         # obruba kolem vybrání
         _wall(m, list(reversed(recess_loop)), floor_z, height)  # stěna vybrání, normála dovnitř
 
         if dot_depth > 0:
@@ -149,10 +215,15 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
         else:
             _cap(m, recess_loop, None, floor_z, up=True)      # hladké dno vybrání
     else:
-        _cap(m, outline, None, height, up=True)               # ploché horní čelo
+        _cap(m, face, None, height, up=True)                  # ploché horní čelo
 
-    for loop in pocket_loops:                                 # slepé kapsy
-        _wall(m, list(reversed(loop)), 0.0, pocket_depth)
+    for loop, ring in zip(pocket_loops, mouths):
+        if ringed:
+            _wall(m, list(reversed(ring)), 0.0, ring_depth)   # stěna prstence
+            _cap(m, ring, [loop], ring_depth, up=False)       # mezikruží na dně prstence
+            _wall(m, list(reversed(loop)), ring_depth, pocket_depth)
+        else:
+            _wall(m, list(reversed(loop)), 0.0, pocket_depth)
         _cap(m, loop, None, pocket_depth, up=False)           # strop kapsy míří dolů
 
     hole, _ = threaded_hole(thread_d, pitch, thread_depth, segments=segments)

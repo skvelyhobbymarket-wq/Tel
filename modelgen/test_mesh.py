@@ -293,6 +293,49 @@ class TestKnob(unittest.TestCase):
         near_base = [math.hypot(v[0], v[1]) for v in m.vertices if v[2] < 3.0]
         self.assertLessEqual(max(near_base), 14.0 + 1e-6)
 
+    def test_fillet_keeps_the_outer_dimension(self):
+        """Zaoblení zatahuje čela dovnitř, ale největší průměr drží uprostřed."""
+        for edge_r in (0.0, 1.0, 1.5):
+            with self.subTest(edge_r=edge_r):
+                m = knob(segments=48, edge_r=edge_r)
+                span = max(math.hypot(v[0], v[1]) for v in m.vertices)
+                self.assertAlmostEqual(span, 37.5, delta=0.05)
+
+    def test_fillet_pulls_the_faces_in(self):
+        """Na čele je obrys zatažený o poloměr zaoblení proti rovné části boku."""
+        edge_r = 1.5
+        m = knob(segments=48, edge_r=edge_r, boss_h=4.0, height=26.0)
+        # rovná část boku začíná ve výšce edge_r nad spodkem těla (to je v z=4)
+        at_straight = max(math.hypot(v[0], v[1])
+                          for v in m.vertices if abs(v[2] - (4.0 + edge_r)) < 1e-6)
+        at_face = max(math.hypot(v[0], v[1]) for v in m.vertices if abs(v[2] - 30.0) < 1e-6)
+        self.assertAlmostEqual(at_straight, 37.5, delta=0.05)
+        self.assertAlmostEqual(at_face, 37.5 - edge_r, delta=0.15)
+
+    def test_fillet_removes_material(self):
+        sharp = knob(segments=48, edge_r=0.0)
+        rounded = knob(segments=48, edge_r=1.5)
+        self.assertLess(signed_volume(rounded), signed_volume(sharp))
+
+    def test_rejects_fillet_larger_than_body(self):
+        with self.assertRaises(ValueError):
+            knob(height=4.0, edge_r=3.0)
+        with self.assertRaises(ValueError):
+            knob(edge_r=-1.0)
+
+    def test_rings_remove_their_own_annulus(self):
+        """Prstence musí ubrat právě objem svých mezikruží."""
+        pocket_r, ring_w, ring_depth, pockets = 9.4 / 2.0, 1.0, 1.0, 8
+        plain = knob(segments=64, ring_depth=0.0)
+        ringed = knob(segments=64, ring_w=ring_w, ring_depth=ring_depth)
+        expected = pockets * math.pi * ((pocket_r + ring_w) ** 2 - pocket_r ** 2) * ring_depth
+        self.assertAlmostEqual(signed_volume(plain) - signed_volume(ringed),
+                               expected, delta=0.02 * expected)
+
+    def test_rejects_ring_deeper_than_pocket(self):
+        with self.assertRaises(ValueError):
+            knob(pocket_depth=22.0, ring_depth=25.0)
+
     def test_rejects_boss_colliding_with_pockets(self):
         with self.assertRaises(ValueError):
             knob(boss_d=34.0, boss_h=4.0, pocket_circle_d=40.0, pocket_d=9.4)

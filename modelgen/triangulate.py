@@ -213,3 +213,43 @@ def triangulate(outer: list[Point], holes: list[list[Point]] | None = None
                 raise ValueError("nelze najít ucho — obrys je neplatný")
     triangles.append((indices[0], indices[1], indices[2]))
     return poly, triangles
+
+
+def offset_polygon(poly: list[Point], delta: float) -> list[Point]:
+    """Odsadí uzavřený obrys o `delta` dovnitř (kladné) podél normál.
+
+    Normála se počítá ze sečny mezi sousedy, což pro hladké obrysy stačí.
+    Pro ostré rohy nebo odsazení větší, než je poloměr křivosti, vzniknou
+    smyčky — proto se výsledek nesmí použít bez kontroly (viz `is_simple`).
+    """
+    n = len(poly)
+    if n < 3:
+        raise ValueError("obrys potřebuje alespoň 3 body")
+    ccw = _is_ccw(poly)
+    out: list[Point] = []
+    for i in range(n):
+        prev, nxt = poly[i - 1], poly[(i + 1) % n]
+        tx, ty = nxt[0] - prev[0], nxt[1] - prev[1]
+        length = math.hypot(tx, ty)
+        if length <= EPS:
+            out.append(poly[i])
+            continue
+        nx, ny = ty / length, -tx / length      # vnější normála pro CCW obrys
+        if not ccw:
+            nx, ny = -nx, -ny
+        out.append((poly[i][0] - nx * delta, poly[i][1] - ny * delta))
+    return out
+
+
+def is_simple(poly: list[Point]) -> bool:
+    """Neprotíná se obrys sám se sebou? Odsazení umí vyrobit smyčku."""
+    n = len(poly)
+    for i in range(n):
+        a, b = poly[i], poly[(i + 1) % n]
+        for j in range(i + 2, n):
+            if i == 0 and j == n - 1:
+                continue
+            c, d = poly[j], poly[(j + 1) % n]
+            if _segments_properly_intersect(a, b, c, d):
+                return False
+    return True
