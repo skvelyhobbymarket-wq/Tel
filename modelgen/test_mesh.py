@@ -324,7 +324,7 @@ class TestKnob(unittest.TestCase):
 
     def test_pockets_and_thread_remove_material(self):
         solid = knob(segments=32, pocket_d=0.6, thread_d=1.2, pitch=0.25,
-                     pocket_circle_d=34.0)
+                     pocket_circle_d=34.0, boss_d=2.0)
         drilled = knob(segments=32)
         self.assertLess(signed_volume(drilled), signed_volume(solid))
 

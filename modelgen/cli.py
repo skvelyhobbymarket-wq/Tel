@@ -61,9 +61,9 @@ def main(argv=None) -> int:
     knob_group.add_argument("--root-d", type=float, default=57.5, help="průměr v zářezech")
     knob_group.add_argument("--knob-height", type=float, default=26.0,
                             help="výška těla hvězdice, bez nálitku")
-    knob_group.add_argument("--pockets", type=int, default=7)
+    knob_group.add_argument("--pockets", type=int, default=8)
     knob_group.add_argument("--pocket-d", type=float, default=9.4)
-    knob_group.add_argument("--pocket-circle-d", type=float, default=40.0)
+    knob_group.add_argument("--pocket-circle-d", type=float, default=55.0)
     knob_group.add_argument("--pocket-depth", type=float, default=22.0)
     knob_group.add_argument("--thread-d", type=float, default=24.0, help="velký průměr závitu")
     knob_group.add_argument("--pitch", type=float, default=3.0, help="stoupání závitu")
@@ -76,7 +76,7 @@ def main(argv=None) -> int:
                             help="průměr tečky uprostřed vybrání")
     knob_group.add_argument("--dot-depth", type=float, default=0.8,
                             help="hloubka tečky; 0 = hladké dno")
-    knob_group.add_argument("--boss-d", type=float, default=28.0,
+    knob_group.add_argument("--boss-d", type=float, default=42.0,
                             help="průměr závitového nálitku pod tělem")
     knob_group.add_argument("--boss-h", type=float, default=4.0,
                             help="o kolik nálitek vystupuje pod tělo hvězdice")

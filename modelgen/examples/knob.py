@@ -29,6 +29,13 @@ def star_outline(outer_d: float, root_d: float, lobes: int = 8,
             for i in range(n)]
 
 
+def outline_radius(angle: float, outer_d: float, root_d: float, lobes: int = 8) -> float:
+    """Poloměr hvězdicového obrysu v daném úhlu — stejný předpis jako `star_outline`."""
+    mid = (outer_d + root_d) / 4.0
+    amp = (outer_d - root_d) / 4.0
+    return mid + amp * math.cos(lobes * angle)
+
+
 def _circle(r: float, n: int, cx: float = 0.0, cy: float = 0.0) -> list[tuple[float, float]]:
     return [(cx + r * math.cos(2 * math.pi * i / n), cy + r * math.sin(2 * math.pi * i / n))
             for i in range(n)]
@@ -51,12 +58,12 @@ def _wall(mesh: Mesh, loop, z0: float, z1: float) -> None:
 
 
 def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
-         lobes: int = 8, pockets: int = 7, pocket_d: float = 9.4,
-         pocket_circle_d: float = 40.0, pocket_depth: float = 22.0,
+         lobes: int = 8, pockets: int = 8, pocket_d: float = 9.4,
+         pocket_circle_d: float = 55.0, pocket_depth: float = 22.0,
          thread_d: float = 24.0, pitch: float = 3.0, thread_depth: float = 22.0,
          recess_d: float = 52.5, recess_depth: float = 1.5,
          dot_d: float = 2.4, dot_depth: float = 0.8,
-         boss_d: float = 28.0, boss_h: float = 4.0, min_wall: float = 0.8,
+         boss_d: float = 42.0, boss_h: float = 4.0, min_wall: float = 0.8,
          segments: int = 64) -> Mesh:
     """Sestaví kolečko jako jedno vodotěsné těleso. Nejnižší bod leží v z=0.
 
@@ -77,9 +84,21 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
         raise ValueError("kapsy nesmí prorazit horní čelo")
     if thread_depth >= height + boss_h:
         raise ValueError("závit nesmí prorazit horní čelo")
-    if pocket_circle_d / 2.0 + pocket_d / 2.0 + min_wall >= root_d / 2.0:
-        raise ValueError(
-            f"mezi kapsami a obvodem by zbylo méně než {min_wall} mm materiálu")
+    # Kapsy smí zasahovat za patu zářezů, pokud leží v cípu. Rozhoduje tedy
+    # skutečný poloměr obrysu v místě kapsy, ne poloměr paty.
+    for i in range(pockets):
+        a = 2 * math.pi * i / pockets
+        cx = pocket_circle_d / 2.0 * math.cos(a)
+        cy = pocket_circle_d / 2.0 * math.sin(a)
+        # nejtěsnější místo hledej po obvodu kapsy, ne jen v jejím středu
+        for k in range(72):
+            b = 2 * math.pi * k / 72
+            px = cx + pocket_d / 2.0 * math.cos(b)
+            py = cy + pocket_d / 2.0 * math.sin(b)
+            r = math.hypot(px, py)
+            if r + min_wall >= outline_radius(math.atan2(py, px), outer_d, root_d, lobes):
+                raise ValueError(
+                    f"kapsa {i + 1} se přibližuje k obvodu na méně než {min_wall} mm")
     if pocket_circle_d / 2.0 - pocket_d / 2.0 - min_wall <= thread_d / 2.0:
         raise ValueError(
             f"mezi kapsami a závitem by zbylo méně než {min_wall} mm materiálu")

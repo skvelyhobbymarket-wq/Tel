@@ -70,10 +70,10 @@ takže jde tvar zkontrolovat bez sliceru.
 ```bash
 python3 modelgen/cli.py knob \
   --outer-d 75 --root-d 57.5 --knob-height 26 \
-  --pockets 7 --pocket-d 9.4 --pocket-circle-d 40 --pocket-depth 22 \
+  --pockets 8 --pocket-d 9.4 --pocket-circle-d 55 --pocket-depth 22 \
   --thread-d 24 --pitch 3.0 --thread-depth 22 \
   --recess-d 52.5 --recess-depth 1.5 --dot-d 2.4 --dot-depth 0.8 \
-  --boss-d 28 --boss-h 4 \
+  --boss-d 42 --boss-h 4 \
   --out out/kolecko.stl --preview out/kolecko.png
 ```
 
@@ -81,8 +81,12 @@ Změřené na dílu: průměr přes cípy hvězdy 75 mm, závit M24 (stoupání 
 hloubka závitu i kapes 22 mm, průměr kapes 9,4 mm, výška těla hvězdice 26 mm
 a celková výška 30 mm — závitový nálitek tedy vystupuje 4 mm pod tělo.
 
-Odhadnuté a zatím neověřené: průměr v zářezech, rozteč kapes, průměr nálitku,
-průměr a hloubka vybrání i tečky.
+Odhadnuté a zatím neověřené: průměr v zářezech, rozteč kapes (55 mm), průměr
+nálitku (42 mm), průměr a hloubka vybrání i tečky.
+
+Kapes je osm a leží ve špičkách cípů. Kontrola vůle je proto vedená vůči
+skutečnému poloměru obrysu v místě kapsy, ne vůči poloměru paty zářezů —
+kapsa smí ležet za patou, pokud je v cípu dost materiálu.
 
 Zapuštěný kotouč na pohledové straně (`--recess-d`, `--recess-depth`) a tečka
 uprostřed (`--dot-d`, `--dot-depth`) jsou čistě designové; nulová hloubka je
