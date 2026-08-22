@@ -55,20 +55,34 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
          pocket_circle_d: float = 40.0, pocket_depth: float = 22.0,
          thread_d: float = 24.0, pitch: float = 3.0, thread_depth: float = 22.0,
          recess_d: float = 52.5, recess_depth: float = 1.5,
-         dot_d: float = 2.4, dot_depth: float = 0.8, segments: int = 64) -> Mesh:
-    """Sestaví kolečko jako jedno vodotěsné těleso. Spodní čelo leží v z=0.
+         dot_d: float = 2.4, dot_depth: float = 0.8,
+         boss_d: float = 28.0, boss_h: float = 4.0, min_wall: float = 0.8,
+         segments: int = 64) -> Mesh:
+    """Sestaví kolečko jako jedno vodotěsné těleso. Nejnižší bod leží v z=0.
 
     Pohledová strana není plochá: je v ní kruhové vybrání (`recess_d`,
     `recess_depth`) a uprostřed jeho dna malý důlek (`dot_d`, `dot_depth`).
     Obojí je čistě pohledové — nulová hloubka příslušný prvek vypne.
-    Celková výška dílu zůstává `height`.
+    Závitový nálitek (`boss_d`, `boss_h`) vystupuje pod tělo hvězdice, takže
+    celková výška dílu je `height + boss_h`. Závit začíná na čele nálitku.
     """
-    if pocket_depth >= height or thread_depth >= height:
-        raise ValueError("kapsy ani závit nesmí prorazit horní čelo")
-    if pocket_circle_d / 2.0 + pocket_d / 2.0 >= root_d / 2.0:
-        raise ValueError("kapsy zasahují mimo patu laloků")
-    if pocket_circle_d / 2.0 - pocket_d / 2.0 <= thread_d / 2.0:
-        raise ValueError("kapsy zasahují do závitu")
+    if boss_h < 0:
+        raise ValueError("výška nálitku nesmí být záporná")
+    if boss_h > 0 and boss_d <= thread_d:
+        raise ValueError("nálitek musí být širší než závit")
+    if boss_h > 0 and boss_d / 2.0 > pocket_circle_d / 2.0 - pocket_d / 2.0 - min_wall:
+        raise ValueError(
+            f"mezi nálitkem a kapsami by zbylo méně než {min_wall} mm materiálu")
+    if pocket_depth >= height:
+        raise ValueError("kapsy nesmí prorazit horní čelo")
+    if thread_depth >= height + boss_h:
+        raise ValueError("závit nesmí prorazit horní čelo")
+    if pocket_circle_d / 2.0 + pocket_d / 2.0 + min_wall >= root_d / 2.0:
+        raise ValueError(
+            f"mezi kapsami a obvodem by zbylo méně než {min_wall} mm materiálu")
+    if pocket_circle_d / 2.0 - pocket_d / 2.0 - min_wall <= thread_d / 2.0:
+        raise ValueError(
+            f"mezi kapsami a závitem by zbylo méně než {min_wall} mm materiálu")
     if recess_depth < 0 or dot_depth < 0:
         raise ValueError("hloubka vybrání ani důlku nesmí být záporná")
     if recess_depth > 0 and recess_d >= root_d:
@@ -76,7 +90,7 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
     if dot_depth > 0 and recess_depth > 0 and dot_d >= recess_d:
         raise ValueError("důlek musí být menší než vybrání")
     # Vybrání shora a kapsy zdola si nesmí prorazit navzájem.
-    if height - recess_depth - dot_depth <= max(pocket_depth, thread_depth):
+    if height - recess_depth - dot_depth <= max(pocket_depth, thread_depth - boss_h):
         raise ValueError("vybrání a kapsy se protínají — chybí materiál mezi nimi")
 
     outline = star_outline(outer_d, root_d, lobes)
@@ -87,8 +101,18 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
                     for i in range(pockets)]
 
     m = Mesh()
-    _cap(m, outline, pocket_loops + [mouth], 0.0, up=False)   # spodní čelo s otvory
     _wall(m, outline, 0.0, height)                            # obvod hvězdice
+
+    if boss_h > 0:
+        # Závitový nálitek vystupuje pod tělo; závit ústí až na jeho čele.
+        boss_loop = _circle(boss_d / 2.0, segments)
+        _cap(m, outline, pocket_loops + [boss_loop], 0.0, up=False)
+        _wall(m, boss_loop, -boss_h, 0.0)
+        _cap(m, boss_loop, [mouth], -boss_h, up=False)
+        thread_z0 = -boss_h
+    else:
+        _cap(m, outline, pocket_loops + [mouth], 0.0, up=False)
+        thread_z0 = 0.0
 
     if recess_depth > 0:
         # Pohledové vybrání: čelo hvězdice je mezikruží, kotouč je zapuštěný.
@@ -113,8 +137,8 @@ def knob(outer_d: float = 75.0, root_d: float = 57.5, height: float = 26.0,
         _cap(m, loop, None, pocket_depth, up=False)           # strop kapsy míří dolů
 
     hole, _ = threaded_hole(thread_d, pitch, thread_depth, segments=segments)
-    m.extend(hole)
-    return m
+    m.extend(hole.translated(dz=thread_z0))
+    return m.translated(dz=-thread_z0)   # nejnižší bod dílu na z=0
 
 
 if __name__ == "__main__":

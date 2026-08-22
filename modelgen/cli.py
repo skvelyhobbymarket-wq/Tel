@@ -28,7 +28,8 @@ def build(args) -> "primitives.Mesh":
                     pocket_circle_d=args.pocket_circle_d, pocket_depth=args.pocket_depth,
                     thread_d=args.thread_d, pitch=args.pitch, thread_depth=args.thread_depth,
                     recess_d=args.recess_d, recess_depth=args.recess_depth,
-                    dot_d=args.dot_d, dot_depth=args.dot_depth)
+                    dot_d=args.dot_d, dot_depth=args.dot_depth,
+                    boss_d=args.boss_d, boss_h=args.boss_h)
     if args.shape == "mug":
         return mug(height=args.height, radius=args.radius)
     if args.shape == "gear":
@@ -59,7 +60,7 @@ def main(argv=None) -> int:
     knob_group.add_argument("--outer-d", type=float, default=75.0, help="průměr přes laloky")
     knob_group.add_argument("--root-d", type=float, default=57.5, help="průměr v zářezech")
     knob_group.add_argument("--knob-height", type=float, default=26.0,
-                            help="výška těla hvězdice; musí být větší než --thread-depth")
+                            help="výška těla hvězdice, bez nálitku")
     knob_group.add_argument("--pockets", type=int, default=7)
     knob_group.add_argument("--pocket-d", type=float, default=9.4)
     knob_group.add_argument("--pocket-circle-d", type=float, default=40.0)
@@ -75,6 +76,10 @@ def main(argv=None) -> int:
                             help="průměr tečky uprostřed vybrání")
     knob_group.add_argument("--dot-depth", type=float, default=0.8,
                             help="hloubka tečky; 0 = hladké dno")
+    knob_group.add_argument("--boss-d", type=float, default=28.0,
+                            help="průměr závitového nálitku pod tělem")
+    knob_group.add_argument("--boss-h", type=float, default=4.0,
+                            help="o kolik nálitek vystupuje pod tělo hvězdice")
     p.add_argument("--preview", default=None, help="vykreslit náhled do PNG")
     args = p.parse_args(argv)
 

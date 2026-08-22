@@ -159,6 +159,35 @@ class TestTriangulate(unittest.TestCase):
         pts, tris = tri.triangulate(poly)
         self.assertAlmostEqual(self._area(pts, tris), 20.0, places=9)
 
+    def test_many_holes_at_several_densities(self):
+        """Regrese: sedm kapes plus nálitek se dřív při hustším dělení nedaly
+        otriangulovat — můstky k otvorům se zamotávaly do sebe."""
+        for n in (16, 24, 32, 48, 64):
+            with self.subTest(segments=n):
+                outer = self._circle(37.5, 8 * 24)
+                holes = [self._circle(4.7, n // 2, 20 * math.cos(2 * math.pi * i / 7),
+                                      20 * math.sin(2 * math.pi * i / 7)) for i in range(7)]
+                holes.append(self._circle(14.0, n))
+                pts, tris = tri.triangulate(outer, holes)
+                expected = tri.signed_area(outer) - sum(abs(tri.signed_area(h)) for h in holes)
+                self.assertAlmostEqual(self._area(pts, tris), expected, places=6)
+
+    def test_hole_order_does_not_matter(self):
+        """Výsledná plocha nesmí záviset na pořadí, v jakém otvory přijdou."""
+        outer = [(-10, -10), (10, -10), (10, 10), (-10, 10)]
+        holes = [self._circle(1.5, 20, 5, 5), self._circle(1.5, 20, -5, 5),
+                 self._circle(1.5, 20, -5, -5), self._circle(1.5, 20, 5, -5)]
+        areas = []
+        for order in (holes, list(reversed(holes)), [holes[2], holes[0], holes[3], holes[1]]):
+            pts, tris = tri.triangulate(outer, order)
+            areas.append(self._area(pts, tris))
+        for a in areas[1:]:
+            self.assertAlmostEqual(a, areas[0], places=9)
+
+    def test_rejects_hole_outside_contour(self):
+        with self.assertRaises(ValueError):
+            tri.triangulate([(0, 0), (4, 0), (4, 4), (0, 4)], [self._circle(1, 12, 50, 50)])
+
     def test_rejects_degenerate_input(self):
         with self.assertRaises(ValueError):
             tri.triangulate([(0, 0), (1, 1)])
@@ -207,8 +236,8 @@ class TestKnob(unittest.TestCase):
 
     def test_pockets_do_not_break_through(self):
         """Kapsy ani závit nesmí prorazit horní čelo — tělo si drží svou výšku."""
-        m = knob(segments=32, height=26.0, pocket_depth=22.0, thread_depth=22.0,
-                 recess_depth=0.0)
+        m = knob(segments=32, height=26.0, boss_h=0.0, pocket_depth=22.0,
+                 thread_depth=22.0, recess_depth=0.0)
         lo, hi = m.bounds()
         self.assertAlmostEqual(hi[2] - lo[2], 26.0, places=6)
         # žádný vrchol nesmí ležet nad horním čelem
@@ -216,9 +245,9 @@ class TestKnob(unittest.TestCase):
 
     def test_rejects_pockets_deeper_than_body(self):
         with self.assertRaises(ValueError):
-            knob(height=10.0, pocket_depth=12.0, thread_depth=5.0)
+            knob(height=10.0, boss_h=0.0, pocket_depth=12.0, thread_depth=5.0)
         with self.assertRaises(ValueError):
-            knob(height=10.0, pocket_depth=5.0, thread_depth=11.0)
+            knob(height=10.0, boss_h=0.0, pocket_depth=5.0, thread_depth=11.0)
 
     def test_rejects_pockets_colliding_with_thread(self):
         with self.assertRaises(ValueError):
@@ -243,8 +272,34 @@ class TestKnob(unittest.TestCase):
         """Vybrání je zapuštěné, takže obrys dílu musí zůstat stejně vysoký."""
         for kw in ({}, {"recess_depth": 0.0}, {"dot_depth": 0.0}):
             with self.subTest(**kw):
-                lo, hi = knob(segments=32, height=26.0, **kw).bounds()
-                self.assertAlmostEqual(hi[2] - lo[2], 26.0, places=6)
+                lo, hi = knob(segments=32, height=26.0, boss_h=4.0, **kw).bounds()
+                self.assertAlmostEqual(hi[2] - lo[2], 30.0, places=6)
+
+    def test_boss_adds_its_height_below_the_body(self):
+        """Nálitek vystupuje pod tělo, takže celková výška je height + boss_h."""
+        without = knob(segments=32, height=26.0, boss_h=0.0)
+        with_boss = knob(segments=32, height=26.0, boss_h=4.0)
+        lo_a, hi_a = without.bounds()
+        lo_b, hi_b = with_boss.bounds()
+        self.assertAlmostEqual(hi_a[2] - lo_a[2], 26.0, places=6)
+        self.assertAlmostEqual(hi_b[2] - lo_b[2], 30.0, places=6)
+        # díl stojí na nule v obou případech
+        self.assertAlmostEqual(lo_a[2], 0.0, places=6)
+        self.assertAlmostEqual(lo_b[2], 0.0, places=6)
+
+    def test_boss_only_widens_the_part_near_its_own_base(self):
+        """Ve výšce nálitku smí být materiál jen do jeho průměru."""
+        m = knob(segments=32, boss_d=28.0, boss_h=4.0)
+        near_base = [math.hypot(v[0], v[1]) for v in m.vertices if v[2] < 3.0]
+        self.assertLessEqual(max(near_base), 14.0 + 1e-6)
+
+    def test_rejects_boss_colliding_with_pockets(self):
+        with self.assertRaises(ValueError):
+            knob(boss_d=34.0, boss_h=4.0, pocket_circle_d=40.0, pocket_d=9.4)
+        with self.assertRaises(ValueError):
+            knob(boss_d=20.0, boss_h=4.0, thread_d=24.0)
+        with self.assertRaises(ValueError):
+            knob(boss_h=-1.0)
 
     def test_rejects_bad_recess(self):
         with self.assertRaises(ValueError):
@@ -257,12 +312,14 @@ class TestKnob(unittest.TestCase):
     def test_rejects_recess_meeting_the_pockets(self):
         """Mezi dnem vybrání a stropem kapes musí zůstat materiál."""
         with self.assertRaises(ValueError):
-            knob(height=20.0, pocket_depth=19.0, thread_depth=19.0, recess_depth=1.5)
+            knob(height=20.0, boss_h=0.0, pocket_depth=19.0, thread_depth=19.0,
+                 recess_depth=1.5)
 
     def test_thread_defaults_to_m24(self):
+        """Největší poloměr závitové plochy odpovídá velkému průměru M24."""
         m = knob(segments=32)
         radii = [math.hypot(v[0], v[1]) for v in m.vertices
-                 if 0.0 < v[2] < 1.0 and math.hypot(v[0], v[1]) < 13.0]
+                 if 0.0 < v[2] < 20.0 and math.hypot(v[0], v[1]) < 13.0]
         self.assertAlmostEqual(max(radii), 12.0, places=6)
 
     def test_pockets_and_thread_remove_material(self):
