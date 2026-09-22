@@ -372,9 +372,40 @@ Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec �
 | Zavařovací víčka Twist, špejle, střeva | 40 | 15 | červenec–říjen |
 | Posypová sůl 5 kg, škrabka na led | 79 | doplnit | listopad–únor |
 
+## Predikce obratu
+
+Parametrický model je v listu *Predikce* v Excelu (žluté buňky jsou parametry, vše ostatní jsou vzorce) a ve skriptu `predikce.py`. Výchozí bod: základní sortiment 184 položek prodává v Solnici 108 tis. Kč bez DPH měsíčně v okně březen/duben, což po přepočtu sezónním indexem z tržeb drogerie 2023–2024 (leden 0,61 až červenec 1,36) odpovídá průměrnému měsíci 120 tis. Kč a roku 1,44 mil. Kč. To je strop: zavedená prodejna s obsluhou a 52 nákupy denně.
+
+Předpoklady scénářů pro samostatnou bezobslužnou jednotku v jiném malém městě:
+
+| Parametr | Pesimistický | Realistický | Optimistický |
+| --- | --: | --: | --: |
+| Poptávka nového města vs. Solnice | 25 % | 40 % | 60 % |
+| Uplift za prodej 24/7 | +5 % | +15 % | +25 % |
+| Ztráty krádežemi | 5 % | 3 % | 2 % |
+| Obchodní marže | 36 % | 38 % | 40 % |
+| Fixní náklady (nájem 12, energie 3, technologie 7, doplňování 8, pojištění 1 tis.) | 31 tis. Kč/měs | 31 tis. | 31 tis. |
+| Poplatky za platby | 1,2 % obratu | 1,2 % | 1,2 % |
+| Rozjezd v 1. roce | 50 / 65 / 80 / 90 %, pak 100 % | | |
+
+Výsledek (Kč bez DPH):
+
+| Scénář | Obrat ustálený rok | Obrat/měs (min–max) | Hrubý zisk po ztrátách a poplatcích | Po fixních nákladech | Rok 1 se startem v dubnu | Break-even obrat/měs |
+| --- | --: | --: | --: | --: | --: | --: |
+| Pesimistický | 385 tis. | 19–43 tis. | 127 tis. | −245 tis. | obrat 345 tis., −258 tis. | 94 tis. |
+| Realistický | 675 tis. | 34–75 tis. | 241 tis. | −131 tis. | obrat 604 tis., −157 tis. | 87 tis. |
+| Optimistický | 1 101 tis. | 55–122 tis. | 418 tis. | +46 tis. | obrat 985 tis., ±0 | 82 tis. |
+
+Realistický měsíční průběh (tis. Kč): leden 34, únor 37, březen 46, duben 53, květen 68, červen 67, červenec 75, srpen 71, září 62, říjen 57, listopad 54, prosinec 51.
+
+Závěr: samostatná jednotka s tímto sortimentem potřebuje 82–94 tis. Kč obratu měsíčně, aby pokryla fixní náklady, a realistický scénář dává 56 tis. Kč. Do plusu se dostane jen při poptávce nad 60 % Solnice, nebo když fixní náklady klesnou pod 20 tis. Kč (vlastní prostor bez nájmu, technologie sdílená pro více jednotek), nebo když se zvedne košík (potraviny a nápoje, dražší nosné položky). Varianta 24/7 zóny u stávající prodejny v Solnici bez nájmu (fixní 12 tis. Kč/měs) je při přírůstku 10–25 % k základu ztrátová o 16–93 tis. Kč ročně a nulová až od přírůstku asi 27 %. Sezónnost je zásadní: leden a únor dělají 60–67 % průměrného měsíce, červenec 136 %, a v prvním roce je vhodný start v březnu nebo dubnu.
+
+Nezahrnutá vstupní investice: technologie vstupu a pokladny 250–400 tis. Kč, regály a vybavení 100 tis. Kč, počáteční zásoba 80–150 tis. Kč.
+
 ## Soubory
 
 - `sortiment_24-7_analyza.xlsx` – list *Skupiny* (32 skupin, vhodnost a komentář), *Kandidatni polozky* (364 položek: jádro a podmíněné), *Metodika*.
 - `skupiny.csv`, `kandidatni_polozky.csv` – totéž v CSV.
 - `analyza.py` – skript, který z `Zasoby.xlsx` tabulky vytvoří (klasifikace názvů, skóring, export).
+- `predikce.py` – model predikce obratu (tři scénáře, sezónnost, break-even), generuje list *Predikce* v Excelu.
 - `zakladni_sortiment.csv`, `zakladni_sortiment.py` – návrh nutného základu 184 položek po sekcích (též list *Zakladni sortiment* v Excelu).
