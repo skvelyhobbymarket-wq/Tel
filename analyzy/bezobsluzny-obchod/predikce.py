@@ -1,6 +1,6 @@
 """Predikce obratu bezobslužné prodejny 24/7 – parametrický model.
 
-Východisko: prodej základního sortimentu (220 položek) v Solnici = 145 293 Kč bez DPH
+Východisko: prodej základního sortimentu (258 položek) v Solnici = 162 333 Kč bez DPH
 za měsíc v okně březen/duben (list Zakladni sortiment). Sezónní index z měsíčních
 tržeb prodejny Drogerie 2023 a 1–8/2024 (Prumerny_nakup.xlsx).
 Vytvoří list "Predikce" v sortiment_24-7_analyza.xlsx s živými vzorci.
@@ -16,7 +16,7 @@ dro24 = [318.8,354.8,424.3,499.1,579.6,558.0,685.0,625.5]
 # sezónní index: průměr 2023 a 2024 (kde je), normovaný na roční průměr 2023
 idx = np.array([(a+b)/2 if b else a for a,b in zip(dro23, dro24+[None]*4)])
 idx = idx/np.mean(dro23)
-BASE_MAR_APR = 145293.0   # Kč bez DPH/měs, okno březen/duben (220 položek základu)
+BASE_MAR_APR = 162333.0   # Kč bez DPH/měs, okno březen/duben (258 položek základu)
 idx_mar_apr = (idx[2]+idx[3])/2
 BASE_AVG = BASE_MAR_APR/idx_mar_apr   # průměrný měsíc v Solnici
 
@@ -68,7 +68,7 @@ if __name__=='__main__':
     ws['A1']='Predikce obratu bezobslužné prodejny 24/7 (Kč bez DPH). Žluté buňky = parametry k úpravě.'; ws['A1'].font=bold
     ws['A3']='Parametr'; ws['B3']='Pesimistický'; ws['C3']='Realistický'; ws['D3']='Optimistický'
     for c in 'ABCD': ws[c+'3'].font=bold; ws[c+'3'].fill=hdr
-    params=[('Základ: prodej základního sortimentu v Solnici, průměrný měsíc (Kč bez DPH)', [round(BASE_AVG)]*3, 'Z listu Zakladni sortiment, 145 293 Kč v okně březen/duben, přepočteno sezónním indexem'),
+    params=[('Základ: prodej základního sortimentu v Solnici, průměrný měsíc (Kč bez DPH)', [round(BASE_AVG)]*3, 'Z listu Zakladni sortiment, 162 333 Kč v okně březen/duben, přepočteno sezónním indexem'),
             ('Faktor lokality (poptávka nového města vs. Solnice)', [0.25,0.40,0.60], 'Solnice = zavedená prodejna od 2012, 52 nákupů/den; nové město bez historie'),
             ('Uplift 24/7 (nákupy mimo běžnou otevírací dobu)', [1.05,1.15,1.25], ''),
             ('Ztráty krádežemi a šlonky (% obratu)', [0.05,0.03,0.02], ''),

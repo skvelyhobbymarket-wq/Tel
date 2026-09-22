@@ -10,7 +10,8 @@ from openpyxl import load_workbook
 
 D = 'doplnit'
 ITEMS = [
- # sekce, položka, cena, ks/měs v Solnici, poznámka
+ # sekce, položka, cena Kč s DPH, prodej v Solnici ks/měs nebo "doplnit", poznámka
+
  ('Baterie', 'AA alkalická po kuse (Panasonic)', 8, 46, ''),
  ('Baterie', 'AA alkalická 10 ks (GETI)', 120, 73, ''),
  ('Baterie', 'AAA alkalická po kuse', 25, 43, ''),
@@ -89,6 +90,16 @@ ITEMS = [
  ('Lepidla, tmely, pěny', 'Tmel na dřevo 250 g (smrk, dub)', 62, 5, ''),
  ('Lepidla, tmely, pěny', 'Sádra bílá 1 kg a 3 kg', 45, 10, ''),
  ('Lepidla, tmely, pěny', 'Univerzální štukový tmel 400 g (Uniflex)', 65, 3, ''),
+ ('Lepidla, tmely, pěny', 'MAMUT GLUE MULTI 290 ml šedý', 221, 4, ''),
+ ('Lepidla, tmely, pěny', 'MAMUT GLUE TOTAL 290 ml bílý', 249, 4, ''),
+ ('Lepidla, tmely, pěny', 'MAMUT GLUE CRYSTAL 290 ml transparentní', 235, 4, ''),
+ ('Lepidla, tmely, pěny', 'Akrylový tmel 310 ml bílý', 73, 4, 'nejlevnější tmel do spár'),
+ ('Lepidla, tmely, pěny', 'Akrylový štukový tmel 310 ml bílý', 125, 4, ''),
+ ('Lepidla, tmely, pěny', 'Lehčený brousitelný tmel Qualy Fill 500 ml', 149, 4, ''),
+ ('Lepidla, tmely, pěny', 'Lepidlo ve spreji butylové 400 ml', 289, 4, ''),
+ ('Lepidla, tmely, pěny', 'Těsnicí guma K a D profil 9 mm × 6 m', 95, 7, 'okna a dveře, podzim'),
+ ('Lepidla, tmely, pěny', 'Zakrývací fólie stavební 4×5 m 40 µm', 99, 4, 'silnější než malířská'),
+ ('Lepidla, tmely, pěny', 'Stretch fólie ruční 50 cm', 249, 5, 'marže 208 %'),
 
  ('Malířské potřeby', 'Zakrývací fólie 4×5 m', 25, 63, 'nejprodávanější kus prodejny'),
  ('Malířské potřeby', 'Zakrývací plachta 4×12,5 m', 55, 16, ''),
@@ -101,6 +112,60 @@ ITEMS = [
  ('Malířské potřeby', 'Špachtle 60 mm a 100 mm', 39, D, ''),
  ('Malířské potřeby', 'Míchací pohár 385 ml', 21, 4, ''),
  ('Malířské potřeby', 'Nopová fólie 0,5 m a 1 m × 20 m', 38, 40, 'izolace základů, silný prodej'),
+
+ ('Barvy na zeď a nátěry', 'Het Klasik otěruvzdorný 15+3 kg', 799, 15, 'nejsilnější položka do 1 000 Kč'),
+ ('Barvy na zeď a nátěry', 'Het Klasik otěruvzdorný 7+1 kg', 459, 3, ''),
+ ('Barvy na zeď a nátěry', 'Het Klasik otěruvzdorný 4 kg', 319, 2, ''),
+ ('Barvy na zeď a nátěry', 'Het Klasik 1,5 kg', 150, 5, 'malá oprava, nejnižší cena'),
+ ('Barvy na zeď a nátěry', 'Primalex Polar 15+3 kg', 999, 3, ''),
+ ('Barvy na zeď a nátěry', 'Primalex Polar / Standard 7,5 kg', 500, 2, ''),
+ ('Barvy na zeď a nátěry', 'Malířské vápno 11 kg / bílení 6 kg', 250, 4, 'sklepy, hospodářské budovy'),
+ ('Barvy na zeď a nátěry', 'Penetrace akrylátová 1 l', 69, 2, 'patří k barvě, prodávat vedle'),
+ ('Barvy na zeď a nátěry', 'Protiplísňový nátěr / Remal 7,5 kg', 533, 1, ''),
+ ('Barvy na zeď a nátěry', 'Bochemit proti plísním 500 ml rozprašovač', 99, 6, ''),
+ ('Barvy na zeď a nátěry', 'Eternal IN STOP izolační 1 kg', 309, 2, 'na skvrny a fleky'),
+ ('Barvy na zeď a nátěry', 'Fasádní barva Remal 7,5 kg', 639, 1, 'jen jedna velikost'),
+ ('Barvy na zeď a nátěry', 'Lazura na dřevo 0,75 l (palisandr, ořech, teak)', 199, 6, 'Luxol Originál'),
+ ('Barvy na zeď a nátěry', 'Lak interiérový vodouředitelný 0,6 l mat a lesk', 275, 6, ''),
+ ('Barvy na zeď a nátěry', 'Syntetický email bílý 0,6 l', 229, 7, ''),
+ ('Barvy na zeď a nátěry', 'Základní barva na kov 0,6–0,75 l', 200, 10, 'Komaprim, syntetika primer'),
+ ('Barvy na zeď a nátěry', 'Alkyton 0,7–1 l přímo na rez', 549, 20, '20 ks/měs, silná položka'),
+ ('Barvy na zeď a nátěry', 'Laksil bezbarvý 0,7 kg', 499, 6, ''),
+ ('Barvy na zeď a nátěry', 'Míchací tyčka, sítko na lak, krycí papír', 15, 11, 'drobnost k barvě, marže 110–180 %'),
+
+ # --- Spreje: 113 ks/měs, 15 tis. Kč. Hořlavé a lákavé ke krádeži, proto jen základní řada
+ # a raději v zamčené vitríně nebo v zorném poli kamery u pokladny.
+ ('Spreje', 'Značkovací sprej FLUO oranžový', 215, 18, 'nejprodávanější sprej, 18 ks/měs'),
+ ('Spreje', 'Sprej RAL 9005 černý mat a lesk', 119, 11, ''),
+ ('Spreje', 'Sprej RAL 9010 bílý mat', 119, 3, ''),
+ ('Spreje', 'Sprej RAL 3002 červený', 119, 3, ''),
+ ('Spreje', 'Sprej RAL 5010 modrý', 119, 2, ''),
+ ('Spreje', 'Sprej zinek ALU (pozinkování)', 189, 4, 'opravy plotů a okapů'),
+ ('Spreje', 'Antikorozní základ ve spreji šedý', 145, 2, ''),
+ ('Spreje', 'Žáruvzdorný sprej do 600 °C černý', 196, 3, 'kamna, komíny'),
+ ('Spreje', 'Akrylový sprej profi 600 ml černý', 249, 8, ''),
+ ('Spreje', 'Uvolňovač šroubů a rzi 400 ml', 153, 2, ''),
+ ('Spreje', 'Multi sprej 6 v 1 400 ml', 219, 2, 'marže 141 %'),
+ ('Spreje', 'Oživovač plastů 300 ml', 99, 3, ''),
+
+ # --- Stavebniny: těžké pytle se bezobslužně prodávají dobře, protože se špatně kradou
+ # a výrazně zvedají košík. Patří na paletu u vstupu, ne do regálu.
+ ('Stavebniny a suché směsi', 'Flexibilní lepidlo na obklady a dlažbu 25 kg', 429, 4, 'v datech 4 ks/měs, marže 73 %'),
+ ('Stavebniny a suché směsi', 'Cement 25 kg', 189, 'doplnit', 'sklad prodejny 2'),
+ ('Stavebniny a suché směsi', 'Betonová směs / pískobeton 25 kg', 129, 'doplnit', ''),
+ ('Stavebniny a suché směsi', 'Sloupkobeton rychletuhnoucí 20–25 kg', 149, 'doplnit', 'plotové sloupky, sušáky, vývěsky'),
+ ('Stavebniny a suché směsi', 'Zdicí malta 25 kg', 129, 'doplnit', ''),
+ ('Stavebniny a suché směsi', 'Jádrová omítka 25 kg', 155, 5, 'v datech 5 ks/měs'),
+ ('Stavebniny a suché směsi', 'Sádrová omítka G300 20 kg', 257, 2, ''),
+ ('Stavebniny a suché směsi', 'Lepicí a stěrkový tmel fasáda 25 kg', 229, 4, ''),
+ ('Stavebniny a suché směsi', 'Spárovací hmota 5 kg (bílá, šedá)', 189, 'doplnit', ''),
+ ('Stavebniny a suché směsi', 'Finish tmel na sádrokarton 5 kg', 135, 2, ''),
+ ('Stavebniny a suché směsi', 'Uniflex štukový a akrylátový 400 g', 65, 4, 'malá oprava zdi'),
+ ('Stavebniny a suché směsi', 'Penetrace 1 kg a hloubková 5 l', 84, 4, 'patří k omítce i k barvě'),
+ ('Stavebniny a suché směsi', 'Krabice a víčka do sádrokartonu', 40, 7, ''),
+ ('Stavebniny a suché směsi', 'Perlinka 50 m a rohová lišta', 299, 'doplnit', ''),
+ ('Stavebniny a suché směsi', 'Pytle na suť 120 l (3 ks)', 89, 3, 'marže 148 %'),
+ ('Stavebniny a suché směsi', 'Stavební kolečko / zednická lžíce a hladítko', 199, 'doplnit', ''),
 
  ('Vodoinstalace', 'Hadicové spony 8–12 / 12–20 / 16–25 / 20–32 / 25–40 / 32–50', 9, 77, 'celá řada'),
  ('Vodoinstalace', 'Objímka trubková 2-šroub 31–38 mm', 16, 25, ''),
@@ -115,10 +180,10 @@ ITEMS = [
  ('Vodoinstalace', 'Sprchová hadice 150 cm', 245, 3, ''),
  ('Vodoinstalace', 'Sifon umyvadlový plast', 89, D, ''),
  ('Vodoinstalace', 'Zahradní hadice 1/2" 20 m + rychlospojky', 399, D, 'ověřit z dat prodejny 2'),
-
  # --- Spojovací materiál: v Solnici se prodává na kusy přes pult (šroub za 0,40 Kč,
  # 87 ks/měs jediné položky) a hlavní sklad je na prodejně 2. Bezobslužně musí být
  # předbalený v blistru nebo sáčku s čárovým kódem. Skupina drží 174 ks/měs.
+
  ('Spojovací materiál (blistry)', 'Vruty do dřeva 3,5×30 (100 ks)', 59, D, 'nejmenší běžná velikost'),
  ('Spojovací materiál (blistry)', 'Vruty do dřeva 4×40 (100 ks)', 69, D, ''),
  ('Spojovací materiál (blistry)', 'Vruty do dřeva 4×50 (100 ks)', 79, D, ''),
@@ -147,29 +212,22 @@ ITEMS = [
  ('Spojovací materiál (blistry)', 'Vázací drát pozink 50 m', 49, D, ''),
  ('Spojovací materiál (blistry)', 'Karabiny a řetěz po 1 m', 59, D, ''),
  ('Spojovací materiál (blistry)', 'Trhací nýty 4×10 (50 ks)', 59, D, ''),
-
  # --- Barvy na zeď: v Solnici 54 ks/měs a 19,5 tis. Kč/měs. Het Klasik 15+3 kg je
  # vůbec nejsilnější položka prodejny do 1 000 Kč (8,2 tis. Kč/měs). Bezobslužně jde
  # jen hotová bílá v pevných baleních – tónované báze (v datech za 1 Kč) vyžadují míchačku.
- ('Barvy na zeď a nátěry', 'Het Klasik otěruvzdorný 15+3 kg', 799, 15, 'nejsilnější položka do 1 000 Kč'),
- ('Barvy na zeď a nátěry', 'Het Klasik otěruvzdorný 7+1 kg', 459, 3, ''),
- ('Barvy na zeď a nátěry', 'Het Klasik otěruvzdorný 4 kg', 319, 2, ''),
- ('Barvy na zeď a nátěry', 'Het Klasik 1,5 kg', 150, 5, 'malá oprava, nejnižší cena'),
- ('Barvy na zeď a nátěry', 'Primalex Polar 15+3 kg', 999, 3, ''),
- ('Barvy na zeď a nátěry', 'Primalex Polar / Standard 7,5 kg', 500, 2, ''),
- ('Barvy na zeď a nátěry', 'Malířské vápno 11 kg / bílení 6 kg', 250, 4, 'sklepy, hospodářské budovy'),
- ('Barvy na zeď a nátěry', 'Penetrace akrylátová 1 l', 69, 2, 'patří k barvě, prodávat vedle'),
- ('Barvy na zeď a nátěry', 'Protiplísňový nátěr / Remal 7,5 kg', 533, 1, ''),
- ('Barvy na zeď a nátěry', 'Bochemit proti plísním 500 ml rozprašovač', 99, 6, ''),
- ('Barvy na zeď a nátěry', 'Eternal IN STOP izolační 1 kg', 309, 2, 'na skvrny a fleky'),
- ('Barvy na zeď a nátěry', 'Fasádní barva Remal 7,5 kg', 639, 1, 'jen jedna velikost'),
- ('Barvy na zeď a nátěry', 'Lazura na dřevo 0,75 l (palisandr, ořech, teak)', 199, 6, 'Luxol Originál'),
- ('Barvy na zeď a nátěry', 'Lak interiérový vodouředitelný 0,6 l mat a lesk', 275, 6, ''),
- ('Barvy na zeď a nátěry', 'Syntetický email bílý 0,6 l', 229, 7, ''),
- ('Barvy na zeď a nátěry', 'Základní barva na kov 0,6–0,75 l', 200, 10, 'Komaprim, syntetika primer'),
- ('Barvy na zeď a nátěry', 'Alkyton 0,7–1 l přímo na rez', 549, 20, '20 ks/měs, silná položka'),
- ('Barvy na zeď a nátěry', 'Laksil bezbarvý 0,7 kg', 499, 6, ''),
- ('Barvy na zeď a nátěry', 'Míchací tyčka, sítko na lak, krycí papír', 15, 11, 'drobnost k barvě, marže 110–180 %'),
+ ('Spojovací materiál (blistry)', 'Turbošrouby do betonu 7,5×60 a 7,5×100 (10 ks)', 99, 'doplnit', 'bez hmoždinky, rychlé kotvení'),
+ ('Spojovací materiál (blistry)', 'Natloukací hmoždinky 6×40 a 8×60 (50 ks)', 79, 'doplnit', 'lišty, latě'),
+ ('Spojovací materiál (blistry)', 'Hřebíky do betonu (sáček)', 49, 'doplnit', ''),
+ ('Spojovací materiál (blistry)', 'Tesařské úhelníky 40, 70, 90 mm', 25, 'doplnit', 'k vrutům, časté u altánů a plotů'),
+ ('Spojovací materiál (blistry)', 'Spojka a patka sloupku 70/90 mm', 149, 'doplnit', 'ke sloupkobetonu'),
+ ('Spojovací materiál (blistry)', 'Vruty do dřeva 4,5×70 a 5×90 (25 ks)', 89, 'doplnit', 'plot, terasa'),
+ ('Spojovací materiál (blistry)', 'Vruty se zápustnou hlavou TORX (sada s bitem)', 99, 'doplnit', 'bit v balení je hlavní důvod nákupu'),
+ ('Spojovací materiál (blistry)', 'Šrouby M6/M8/M10 s maticí, 60–100 mm (sada)', 89, 'doplnit', ''),
+ ('Spojovací materiál (blistry)', 'Vratové šrouby 8×80 s maticí (10 ks)', 79, 'doplnit', ''),
+ ('Spojovací materiál (blistry)', 'Závitová tyč M6 a M10 1 m', 99, 'doplnit', ''),
+ ('Spojovací materiál (blistry)', 'Trhací nýty 3,2 a 4,8 mm (50 ks)', 59, 'doplnit', ''),
+ ('Spojovací materiál (blistry)', 'Sponky do sponkovačky typ G 10–12 mm', 59, 'doplnit', ''),
+ ('Spojovací materiál (blistry)', 'Šroub s okem a vrut s hákem (sada)', 45, 'doplnit', ''),
 
  ('Ruční nářadí', 'Svinovací metr 5 m', 99, 9, ''),
  ('Ruční nářadí', 'Odlamovací nůž 18 mm kovový', 89, 7, ''),
@@ -202,20 +260,6 @@ ITEMS = [
  ('Technická chemie', 'Vazelína bílá', 195, 4, ''),
  ('Technická chemie', 'Destilovaná voda 5 l', 70, 6, ''),
  ('Technická chemie', 'Nemrznoucí směs do ostřikovačů 3 l', 99, D, 'sezónně'),
-
- ('Úklid', 'Savo Original 1,2 l', 67, 5, ''),
- ('Úklid', 'Savo proti plísni 500 ml', 99, 5, ''),
- ('Úklid', 'Domestos 750 ml / 2 l', 59, 10, ''),
- ('Úklid', 'Jar / prostředek na nádobí 900 ml', 59, D, ''),
- ('Úklid', 'Univerzální čistič (Ajax, Cif)', 59, D, ''),
- ('Úklid', 'Pytle na odpad 60 l a 120 l', 39, 11, ''),
- ('Úklid', 'Houbičky na nádobí 5 ks', 25, D, ''),
- ('Úklid', 'Hadr podlahový', 32, 4, ''),
- ('Úklid', 'Osvěžovač vzduchu', 29, 9, ''),
- ('Úklid', 'Solvina / Praganda (mycí pasta na ruce)', 20, 15, 'typicky DIY'),
- ('Úklid', 'WC blok', 39, 5, ''),
- ('Úklid', 'Lopatka + smetáček', 49, 6, ''),
- ('Úklid', 'Zamražovací / svačinové sáčky', 39, 4, ''),
 
  ('Hygiena', 'Toaletní papír Jumbo / 8 rolí', 39, 30, ''),
  ('Hygiena', 'Papírové ručníky ZZ', 45, 15, ''),
@@ -257,7 +301,6 @@ ITEMS = [
  ('Sezónní stojan (rotace)', 'Zavařovací víčka Twist, špejle, střeva', 40, 15, 'červenec–říjen'),
  ('Sezónní stojan (rotace)', 'Posypová sůl 5 kg, škrabka na led', 79, D, 'listopad–únor'),
 ]
-
 df = pd.DataFrame(ITEMS, columns=['Sekce', 'Položka', 'Cena Kč', 'Prodej Solnice ks/měs', 'Poznámka'])
 if __name__ == '__main__':
     df.to_csv('zakladni_sortiment.csv', index=False)

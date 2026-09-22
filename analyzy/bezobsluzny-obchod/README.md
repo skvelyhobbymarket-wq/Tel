@@ -8,6 +8,7 @@ Cíl: z reálných prodejů prodejny 1 (drogerie, barvy/laky, elektro, voda) v S
 - **Prodej je extrémně koncentrovaný.** Z 12 897 skladových karet se za měsíc prodá jen 3 200 a **316 položek dělá polovinu všech prodaných kusů**, 1 300 položek 80 %. Malá prodejna s 300–400 položkami tedy pokryje většinu poptávky.
 - **Jádro sortimentu pro 24/7: 282 položek** z 13 skupin (tabulka níže). Tvoří 38 % prodaných kusů a 16 % obratu prodejny 1, průměrná marže 30–50 %. Dalších 82 položek je vhodných podmíněně (kabely v předbalených návinech, spojovací materiál v blistrech, malá ředidla).
 - **Co bezobslužně nejde:** nátěrové hmoty (24 % obratu prodejny, ale kbelíky, tónování, poradenství), stavební chemie v pytlích, pyrotechnika, spreje, sortiment na metry a na kusy.
+- **Koncept jinde existuje, ale ne v kutilském zboží.** Bezobslužný hobbymarket se v zahraničí nepodařilo najít ani jeden; funguje noční režim B2B poboček (Würth, Rexel), výdejní box před zavřeným marketem (hagebau) a samoobslužný výdej stavebnin na dvoře. V ČR jede 100 automatizovaných prodejen COOP a v Děčíně **samoobslužné železářství ALTARA 24/7**. Detail, legislativa a technika proti krádežím jsou v `koncepty-a-zabezpeceni.md`.
 - **Spojovací materiál a barvy na zeď jsou v základu posílené.** Spojovák má v prodejně 1 jen 161 karet a prodává se přes pult na kusy (šroub za 0,40 Kč, 87 ks/měs), hlavní sklad je na prodejně 2 – bezobslužně musí být v blistrech, proto je v návrhu 28 položek. Barvy na zeď dělají 54 ks a 19,5 tis. Kč měsíčně a Het Klasik 15+3 kg je nejsilnější položka prodejny do 1 000 Kč (8,2 tis. Kč/měs); v základu je 19 položek v pevných baleních bez tónování.
 - **Chybí data z prodejny 2** (železářství, zahrada, rybařina). Ta je pro 24/7 formát velmi relevantní a stejný export „Zásoby“ z jejího skladu analýzu doplní.
 
@@ -89,9 +90,11 @@ Celkem: 2 200 ks a asi 78 000 Kč obratu měsíčně, tedy 38 % prodaných kusů
 - **Opravit nákupní ceny.** V exportu má několik položek zápornou marži kvůli chybné nákupní ceně (Váleček nylon 6 cm −12 322 Kč, PPR koleno 20 mm −921 Kč, Mamut Glue Total, těsnicí guma K profil). Před oceněním sortimentu je potřeba je opravit.
 - **Doplnit data.** Stejný export „Zásoby“ z prodejny 2 (železářství, zahrada, rybařina) a ideálně roční sloupce, aby se ověřila zimní sezóna a doplnily rybářské potřeby, zahradní drobnosti a hospodářské zboží, které v malých městech v bezobslužném formátu chybí.
 
-## Návrh nutného základu (DIY) – 220 položek
+## Návrh nutného základu (DIY) – 258 položek
 
-Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec „Solnice ks/měs“ je průměrný měsíční prodej z dat prodejny 1; „doplnit“ značí položku mimo tato data (železářství, zahrada, nouzové zboží), doplněnou podle zkušenosti. Sečteno: 153 položek podložených daty prodává v Solnici asi 2 250 ks a 145 tis. Kč bez DPH měsíčně. Tabulka je i v listu *Zakladni sortiment* v Excelu a v `zakladni_sortiment.csv`.
+Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec „Solnice ks/měs“ je průměrný měsíční prodej z dat prodejny 1; „doplnit“ značí položku mimo tato data (železářství, stavebniny, nouzové zboží), doplněnou podle zkušenosti. Sečteno: 174 položek podložených daty prodává v Solnici asi 2 320 ks a 162 tis. Kč bez DPH měsíčně.
+
+Běžná úklidová drogerie (Savo, Domestos, prostředky na nádobí, pytle, houbičky) je ze základu vyřazená — konkuruje jí každý supermarket a nese nejnižší marži ze všech skupin. Rybářské potřeby v základu nejsou. Kyselina solná a louh chybí záměrně: jako žíraviny je § 44a zákona č. 258/2000 Sb. zakazuje prodávat automatem a osobám mladším 18 let.
 
 
 ### Baterie (13)
@@ -178,7 +181,7 @@ Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec �
 | Oboustranná montážní páska | 89 | doplnit |  |
 | Stahovací pásky 200 mm a 300 mm (50 ks) | 50 | 8 |  |
 
-### Lepidla, tmely, pěny (14)
+### Lepidla, tmely, pěny (24)
 
 | Položka | Cena Kč | Solnice ks/měs | Poznámka |
 | --- | --: | --: | --- |
@@ -196,6 +199,16 @@ Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec �
 | Tmel na dřevo 250 g (smrk, dub) | 62 | 5 |  |
 | Sádra bílá 1 kg a 3 kg | 45 | 10 |  |
 | Univerzální štukový tmel 400 g (Uniflex) | 65 | 3 |  |
+| MAMUT GLUE MULTI 290 ml šedý | 221 | 4 |  |
+| MAMUT GLUE TOTAL 290 ml bílý | 249 | 4 |  |
+| MAMUT GLUE CRYSTAL 290 ml transparentní | 235 | 4 |  |
+| Akrylový tmel 310 ml bílý | 73 | 4 | nejlevnější tmel do spár |
+| Akrylový štukový tmel 310 ml bílý | 125 | 4 |  |
+| Lehčený brousitelný tmel Qualy Fill 500 ml | 149 | 4 |  |
+| Lepidlo ve spreji butylové 400 ml | 289 | 4 |  |
+| Těsnicí guma K a D profil 9 mm × 6 m | 95 | 7 | okna a dveře, podzim |
+| Zakrývací fólie stavební 4×5 m 40 µm | 99 | 4 | silnější než malířská |
+| Stretch fólie ruční 50 cm | 249 | 5 | marže 208 % |
 
 ### Malířské potřeby (11)
 
@@ -212,6 +225,68 @@ Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec �
 | Špachtle 60 mm a 100 mm | 39 | doplnit |  |
 | Míchací pohár 385 ml | 21 | 4 |  |
 | Nopová fólie 0,5 m a 1 m × 20 m | 38 | 40 | izolace základů, silný prodej |
+
+### Barvy na zeď a nátěry (19)
+
+| Položka | Cena Kč | Solnice ks/měs | Poznámka |
+| --- | --: | --: | --- |
+| Het Klasik otěruvzdorný 15+3 kg | 799 | 15 | nejsilnější položka do 1 000 Kč |
+| Het Klasik otěruvzdorný 7+1 kg | 459 | 3 |  |
+| Het Klasik otěruvzdorný 4 kg | 319 | 2 |  |
+| Het Klasik 1,5 kg | 150 | 5 | malá oprava, nejnižší cena |
+| Primalex Polar 15+3 kg | 999 | 3 |  |
+| Primalex Polar / Standard 7,5 kg | 500 | 2 |  |
+| Malířské vápno 11 kg / bílení 6 kg | 250 | 4 | sklepy, hospodářské budovy |
+| Penetrace akrylátová 1 l | 69 | 2 | patří k barvě, prodávat vedle |
+| Protiplísňový nátěr / Remal 7,5 kg | 533 | 1 |  |
+| Bochemit proti plísním 500 ml rozprašovač | 99 | 6 |  |
+| Eternal IN STOP izolační 1 kg | 309 | 2 | na skvrny a fleky |
+| Fasádní barva Remal 7,5 kg | 639 | 1 | jen jedna velikost |
+| Lazura na dřevo 0,75 l (palisandr, ořech, teak) | 199 | 6 | Luxol Originál |
+| Lak interiérový vodouředitelný 0,6 l mat a lesk | 275 | 6 |  |
+| Syntetický email bílý 0,6 l | 229 | 7 |  |
+| Základní barva na kov 0,6–0,75 l | 200 | 10 | Komaprim, syntetika primer |
+| Alkyton 0,7–1 l přímo na rez | 549 | 20 | 20 ks/měs, silná položka |
+| Laksil bezbarvý 0,7 kg | 499 | 6 |  |
+| Míchací tyčka, sítko na lak, krycí papír | 15 | 11 | drobnost k barvě, marže 110–180 % |
+
+### Spreje (12)
+
+| Položka | Cena Kč | Solnice ks/měs | Poznámka |
+| --- | --: | --: | --- |
+| Značkovací sprej FLUO oranžový | 215 | 18 | nejprodávanější sprej, 18 ks/měs |
+| Sprej RAL 9005 černý mat a lesk | 119 | 11 |  |
+| Sprej RAL 9010 bílý mat | 119 | 3 |  |
+| Sprej RAL 3002 červený | 119 | 3 |  |
+| Sprej RAL 5010 modrý | 119 | 2 |  |
+| Sprej zinek ALU (pozinkování) | 189 | 4 | opravy plotů a okapů |
+| Antikorozní základ ve spreji šedý | 145 | 2 |  |
+| Žáruvzdorný sprej do 600 °C černý | 196 | 3 | kamna, komíny |
+| Akrylový sprej profi 600 ml černý | 249 | 8 |  |
+| Uvolňovač šroubů a rzi 400 ml | 153 | 2 |  |
+| Multi sprej 6 v 1 400 ml | 219 | 2 | marže 141 % |
+| Oživovač plastů 300 ml | 99 | 3 |  |
+
+### Stavebniny a suché směsi (16)
+
+| Položka | Cena Kč | Solnice ks/měs | Poznámka |
+| --- | --: | --: | --- |
+| Flexibilní lepidlo na obklady a dlažbu 25 kg | 429 | 4 | v datech 4 ks/měs, marže 73 % |
+| Cement 25 kg | 189 | doplnit | sklad prodejny 2 |
+| Betonová směs / pískobeton 25 kg | 129 | doplnit |  |
+| Sloupkobeton rychletuhnoucí 20–25 kg | 149 | doplnit | plotové sloupky, sušáky, vývěsky |
+| Zdicí malta 25 kg | 129 | doplnit |  |
+| Jádrová omítka 25 kg | 155 | 5 | v datech 5 ks/měs |
+| Sádrová omítka G300 20 kg | 257 | 2 |  |
+| Lepicí a stěrkový tmel fasáda 25 kg | 229 | 4 |  |
+| Spárovací hmota 5 kg (bílá, šedá) | 189 | doplnit |  |
+| Finish tmel na sádrokarton 5 kg | 135 | 2 |  |
+| Uniflex štukový a akrylátový 400 g | 65 | 4 | malá oprava zdi |
+| Penetrace 1 kg a hloubková 5 l | 84 | 4 | patří k omítce i k barvě |
+| Krabice a víčka do sádrokartonu | 40 | 7 |  |
+| Perlinka 50 m a rohová lišta | 299 | doplnit |  |
+| Pytle na suť 120 l (3 ks) | 89 | 3 | marže 148 % |
+| Stavební kolečko / zednická lžíce a hladítko | 199 | doplnit |  |
 
 ### Vodoinstalace (13)
 
@@ -231,7 +306,7 @@ Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec �
 | Sifon umyvadlový plast | 89 | doplnit |  |
 | Zahradní hadice 1/2" 20 m + rychlospojky | 399 | doplnit | ověřit z dat prodejny 2 |
 
-### Spojovací materiál (blistry) (28)
+### Spojovací materiál (blistry) (41)
 
 | Položka | Cena Kč | Solnice ks/měs | Poznámka |
 | --- | --: | --: | --- |
@@ -263,30 +338,19 @@ Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec �
 | Vázací drát pozink 50 m | 49 | doplnit |  |
 | Karabiny a řetěz po 1 m | 59 | doplnit |  |
 | Trhací nýty 4×10 (50 ks) | 59 | doplnit |  |
-
-### Barvy na zeď a nátěry (19)
-
-| Položka | Cena Kč | Solnice ks/měs | Poznámka |
-| --- | --: | --: | --- |
-| Het Klasik otěruvzdorný 15+3 kg | 799 | 15 | nejsilnější položka do 1 000 Kč |
-| Het Klasik otěruvzdorný 7+1 kg | 459 | 3 |  |
-| Het Klasik otěruvzdorný 4 kg | 319 | 2 |  |
-| Het Klasik 1,5 kg | 150 | 5 | malá oprava, nejnižší cena |
-| Primalex Polar 15+3 kg | 999 | 3 |  |
-| Primalex Polar / Standard 7,5 kg | 500 | 2 |  |
-| Malířské vápno 11 kg / bílení 6 kg | 250 | 4 | sklepy, hospodářské budovy |
-| Penetrace akrylátová 1 l | 69 | 2 | patří k barvě, prodávat vedle |
-| Protiplísňový nátěr / Remal 7,5 kg | 533 | 1 |  |
-| Bochemit proti plísním 500 ml rozprašovač | 99 | 6 |  |
-| Eternal IN STOP izolační 1 kg | 309 | 2 | na skvrny a fleky |
-| Fasádní barva Remal 7,5 kg | 639 | 1 | jen jedna velikost |
-| Lazura na dřevo 0,75 l (palisandr, ořech, teak) | 199 | 6 | Luxol Originál |
-| Lak interiérový vodouředitelný 0,6 l mat a lesk | 275 | 6 |  |
-| Syntetický email bílý 0,6 l | 229 | 7 |  |
-| Základní barva na kov 0,6–0,75 l | 200 | 10 | Komaprim, syntetika primer |
-| Alkyton 0,7–1 l přímo na rez | 549 | 20 | 20 ks/měs, silná položka |
-| Laksil bezbarvý 0,7 kg | 499 | 6 |  |
-| Míchací tyčka, sítko na lak, krycí papír | 15 | 11 | drobnost k barvě, marže 110–180 % |
+| Turbošrouby do betonu 7,5×60 a 7,5×100 (10 ks) | 99 | doplnit | bez hmoždinky, rychlé kotvení |
+| Natloukací hmoždinky 6×40 a 8×60 (50 ks) | 79 | doplnit | lišty, latě |
+| Hřebíky do betonu (sáček) | 49 | doplnit |  |
+| Tesařské úhelníky 40, 70, 90 mm | 25 | doplnit | k vrutům, časté u altánů a plotů |
+| Spojka a patka sloupku 70/90 mm | 149 | doplnit | ke sloupkobetonu |
+| Vruty do dřeva 4,5×70 a 5×90 (25 ks) | 89 | doplnit | plot, terasa |
+| Vruty se zápustnou hlavou TORX (sada s bitem) | 99 | doplnit | bit v balení je hlavní důvod nákupu |
+| Šrouby M6/M8/M10 s maticí, 60–100 mm (sada) | 89 | doplnit |  |
+| Vratové šrouby 8×80 s maticí (10 ks) | 79 | doplnit |  |
+| Závitová tyč M6 a M10 1 m | 99 | doplnit |  |
+| Trhací nýty 3,2 a 4,8 mm (50 ks) | 59 | doplnit |  |
+| Sponky do sponkovačky typ G 10–12 mm | 59 | doplnit |  |
+| Šroub s okem a vrut s hákem (sada) | 45 | doplnit |  |
 
 ### Ruční nářadí (12)
 
@@ -331,24 +395,6 @@ Minimální sortiment pro první bezobslužnou jednotku, po sekcích. Sloupec �
 | Vazelína bílá | 195 | 4 |  |
 | Destilovaná voda 5 l | 70 | 6 |  |
 | Nemrznoucí směs do ostřikovačů 3 l | 99 | doplnit | sezónně |
-
-### Úklid (13)
-
-| Položka | Cena Kč | Solnice ks/měs | Poznámka |
-| --- | --: | --: | --- |
-| Savo Original 1,2 l | 67 | 5 |  |
-| Savo proti plísni 500 ml | 99 | 5 |  |
-| Domestos 750 ml / 2 l | 59 | 10 |  |
-| Jar / prostředek na nádobí 900 ml | 59 | doplnit |  |
-| Univerzální čistič (Ajax, Cif) | 59 | doplnit |  |
-| Pytle na odpad 60 l a 120 l | 39 | 11 |  |
-| Houbičky na nádobí 5 ks | 25 | doplnit |  |
-| Hadr podlahový | 32 | 4 |  |
-| Osvěžovač vzduchu | 29 | 9 |  |
-| Solvina / Praganda (mycí pasta na ruce) | 20 | 15 | typicky DIY |
-| WC blok | 39 | 5 |  |
-| Lopatka + smetáček | 49 | 6 |  |
-| Zamražovací / svačinové sáčky | 39 | 4 |  |
 
 ### Hygiena (4)
 
@@ -455,7 +501,7 @@ Celkem 2 050 ks a 102 tis. Kč bez DPH měsíčně, tedy 44 % prodeje těchto sk
 
 ## Predikce obratu
 
-Parametrický model je v listu *Predikce* v Excelu (žluté buňky jsou parametry, vše ostatní jsou vzorce) a ve skriptu `predikce.py`. Výchozí bod: základní sortiment 220 položek prodává v Solnici 145 tis. Kč bez DPH měsíčně v okně březen/duben, což po přepočtu sezónním indexem z tržeb drogerie 2023–2024 (leden 0,61 až červenec 1,36) odpovídá průměrnému měsíci 161 tis. Kč a roku 1,93 mil. Kč. To je strop: zavedená prodejna s obsluhou a 52 nákupy denně.
+Parametrický model je v listu *Predikce* v Excelu (žluté buňky jsou parametry, vše ostatní jsou vzorce) a ve skriptu `predikce.py`. Výchozí bod: základní sortiment 258 položek prodává v Solnici 162 tis. Kč bez DPH měsíčně v okně březen/duben, což po přepočtu sezónním indexem z tržeb drogerie 2023–2024 (leden 0,61 až červenec 1,36) odpovídá průměrnému měsíci 180 tis. Kč a roku 2,16 mil. Kč. To je strop: zavedená prodejna s obsluhou a 52 nákupy denně.
 
 Předpoklady scénářů pro samostatnou bezobslužnou jednotku v jiném malém městě:
 
@@ -473,15 +519,15 @@ Výsledek (Kč bez DPH):
 
 | Scénář | Obrat ustálený rok | Obrat/měs (min–max) | Hrubý zisk po ztrátách a poplatcích | Po fixních nákladech | Rok 1 se startem v dubnu | Break-even obrat/měs |
 | --- | --: | --: | --: | --: | --: | --: |
-| Pesimistický | 517 tis. | 26–57 tis. | 171 tis. | −201 tis. | obrat 462 tis., −219 tis. | 94 tis. |
-| Realistický | 906 tis. | 45–101 tis. | 323 tis. | −49 tis. | obrat 810 tis., −83 tis. | 87 tis. |
-| Optimistický | 1 477 tis. | 74–164 tis. | 561 tis. | +189 tis. | obrat 1 321 tis., +130 tis. | 82 tis. |
+| Pesimistický | 578 tis. | 29–64 tis. | 191 tis. | −181 tis. | obrat 517 tis., −202 tis. | 94 tis. |
+| Realistický | 1 012 tis. | 50–112 tis. | 361 tis. | −11 tis. | obrat 905 tis., −49 tis. | 87 tis. |
+| Optimistický | 1 650 tis. | 82–183 tis. | 627 tis. | +255 tis. | obrat 1 476 tis., +189 tis. | 82 tis. |
 
-Realistický měsíční průběh (tis. Kč): leden 45, únor 50, březen 62, duben 71, květen 91, červen 90, červenec 101, srpen 95, září 83, říjen 77, listopad 73, prosinec 68.
+Realistický měsíční průběh (tis. Kč): leden 50, únor 56, březen 70, duben 79, květen 102, červen 100, červenec 113, srpen 106, září 93, říjen 86, listopad 81, prosinec 76.
 
-Závěr: samostatná jednotka s tímto sortimentem potřebuje 82–94 tis. Kč obratu měsíčně, aby pokryla fixní náklady, a realistický scénář dává 76 tis. Kč – chybí tedy asi 15 %. Do plusu se dostane při poptávce nad 50 % Solnice, nebo když fixní náklady klesnou pod 20 tis. Kč (vlastní prostor bez nájmu, technologie sdílená pro více jednotek), nebo když se zvedne košík (potraviny a nápoje, dražší nosné položky). Varianta 24/7 zóny u stávající prodejny v Solnici bez nájmu (fixní 12 tis. Kč/měs) je při přírůstku 10–20 % k základu ztrátová a do plusu jde od přírůstku asi 21 % (při 25 % vydělá 28 tis. Kč ročně). Sezónnost je zásadní: leden a únor dělají 60–67 % průměrného měsíce, červenec 136 %, a v prvním roce je vhodný start v březnu nebo dubnu.
+Závěr: samostatná jednotka s tímto sortimentem potřebuje 82–94 tis. Kč obratu měsíčně, aby pokryla fixní náklady, a realistický scénář dává 84 tis. Kč – chybí tedy jen 3 %. Do plusu se dostane při poptávce nad 42 % Solnice, nebo když fixní náklady klesnou pod 20 tis. Kč (vlastní prostor bez nájmu, technologie sdílená pro více jednotek), nebo když se zvedne košík (potraviny a nápoje, dražší nosné položky). Varianta 24/7 zóny u stávající prodejny v Solnici bez nájmu (fixní 12 tis. Kč/měs) je při přírůstku do 18 % k základu ztrátová a do plusu jde od přírůstku asi 19 % (při 25 % vydělá 48 tis. Kč ročně). Sezónnost je zásadní: leden a únor dělají 60–67 % průměrného měsíce, červenec 136 %, a v prvním roce je vhodný start v březnu nebo dubnu.
 
-Nezahrnutá vstupní investice: technologie vstupu a pokladny 250–400 tis. Kč, regály a vybavení 100 tis. Kč, počáteční zásoba 80–150 tis. Kč.
+Nezahrnutá vstupní investice, po rešerši upřesněná: technologie v úsporné variantě **155–310 tis. Kč** (vstup na kartu, 6 kamer, jeden samoobslužný kiosek, vitrína), v plné variantě 395–905 tis. Kč. K tomu regály a vybavení asi 100 tis. Kč a počáteční zásoba 80–150 tis. Kč. Od investice lze odečíst dotaci MPO z programu Obchůdek 2021+ až 130 tis. Kč na prodejnu.
 
 ## Soubory
 
@@ -489,5 +535,6 @@ Nezahrnutá vstupní investice: technologie vstupu a pokladny 250–400 tis. Kč
 - `skupiny.csv`, `kandidatni_polozky.csv` – totéž v CSV.
 - `analyza.py` – skript, který z `Zasoby.xlsx` tabulky vytvoří (klasifikace názvů, skóring, export).
 - `predikce.py` – model predikce obratu (tři scénáře, sezónnost, break-even), generuje list *Predikce* v Excelu.
-- `zakladni_sortiment.csv`, `zakladni_sortiment.py` – návrh nutného základu 220 položek po sekcích (též list *Zakladni sortiment* v Excelu).
+- `zakladni_sortiment.csv`, `zakladni_sortiment.py` – návrh nutného základu 258 položek po sekcích (též list *Zakladni sortiment* v Excelu).
 - `mimo_pracovni_dobu.csv`, `mimo_pracovni_dobu.py` – odhad poptávky mimo otevírací dobu (list *Mimo pracovni dobu* v Excelu).
+- `koncepty-a-zabezpeceni.md` – rešerše: podobné koncepty v zahraničí a v ČR, česká legislativa, technické zabezpečení proti krádežím a rozpočet na technologii.
