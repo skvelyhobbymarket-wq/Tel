@@ -7,10 +7,10 @@ Cíl: z reálných prodejů prodejny 1 (drogerie, barvy/laky, elektro, voda) v S
 - **Zákazník prodejny nakupuje drobně a často.** Průměrný nákup je 300–320 Kč (drogerie) a 210 Kč (železářství). 57 % prodaných kusů stojí do 60 Kč, 82 % do 150 Kč. Přesně takové zboží bezobslužný formát unese.
 - **Prodej je extrémně koncentrovaný.** Z 12 897 skladových karet se za měsíc prodá jen 3 200 a **316 položek dělá polovinu všech prodaných kusů**, 1 300 položek 80 %. Malá prodejna s 300–400 položkami tedy pokryje většinu poptávky.
 - **Jádro sortimentu pro 24/7: 282 položek** z 13 skupin (tabulka níže). Tvoří 38 % prodaných kusů a 16 % obratu prodejny 1, průměrná marže 30–50 %. Dalších 82 položek je vhodných podmíněně (kabely v předbalených návinech, spojovací materiál v blistrech, malá ředidla).
-- **Co bezobslužně nejde:** nátěrové hmoty (24 % obratu prodejny, ale kbelíky, tónování, poradenství), stavební chemie v pytlích, pyrotechnika, spreje, sortiment na metry a na kusy.
+- **Co bezobslužně nejde:** tónované báze barev (vyžadují míchačku), pyrotechnika a žíraviny (zakázané zákonem), sortiment na metry a na kusy, běžná úklidová drogerie (konkuruje jí supermarket a nese nejnižší marži). Kbelíky barev a pytle suchých směsí naopak jdou: špatně se kradou a zvedají košík.
 - **Koncept jinde existuje, ale ne v kutilském zboží.** Bezobslužný hobbymarket se v zahraničí nepodařilo najít ani jeden; funguje noční režim B2B poboček (Würth, Rexel), výdejní box před zavřeným marketem (hagebau) a samoobslužný výdej stavebnin na dvoře. V ČR jede 100 automatizovaných prodejen COOP a v Děčíně **samoobslužné železářství ALTARA 24/7**. Detail, legislativa a technika proti krádežím jsou v `koncepty-a-zabezpeceni.md`.
-- **Spojovací materiál a barvy na zeď jsou v základu posílené.** Spojovák má v prodejně 1 jen 161 karet a prodává se přes pult na kusy (šroub za 0,40 Kč, 87 ks/měs), hlavní sklad je na prodejně 2 – bezobslužně musí být v blistrech, proto je v návrhu 28 položek. Barvy na zeď dělají 54 ks a 19,5 tis. Kč měsíčně a Het Klasik 15+3 kg je nejsilnější položka prodejny do 1 000 Kč (8,2 tis. Kč/měs); v základu je 19 položek v pevných baleních bez tónování.
-- **Chybí data z prodejny 2** (železářství, zahrada, rybařina). Ta je pro 24/7 formát velmi relevantní a stejný export „Zásoby“ z jejího skladu analýzu doplní.
+- **Spojovací materiál a barvy na zeď jsou v základu posílené.** Spojovák má v prodejně 1 jen 161 karet a prodává se přes pult na kusy (šroub za 0,40 Kč, 87 ks/měs), hlavní sklad je na prodejně 2 – bezobslužně musí být v blistrech, proto je v návrhu 41 položek. Barvy na zeď dělají 54 ks a 19,5 tis. Kč měsíčně a Het Klasik 15+3 kg je nejsilnější položka prodejny do 1 000 Kč (8,2 tis. Kč/měs); v základu je 19 položek v pevných baleních bez tónování.
+- **Chybí data z prodejny 2** (železářství, stavebniny, zahrada). Spojovací materiál, cement, sloupkobeton a lepidlo na dlažbu jsou v návrhu odhadem; stejný export „Zásoby“ ze skladu Ž je podloží čísly. Rybářské potřeby do základu nezahrnuji.
 
 ## Data
 
@@ -25,37 +25,40 @@ Položky jsem zařadil do produktových skupin podle názvu (klíčová slova); 
 
 ## Produktové skupiny podle vhodnosti pro 24/7
 
-Vhodnost 1–5 hodnotí frekvenci prodeje, cenu, nutnost poradenství, právní a požární omezení, rozměr a trvanlivost. Kusy a obrat jsou průměr za měsíc z obou oken, obrat bez DPH.
+Vhodnost 1–5 hodnotí frekvenci prodeje, cenu, nutnost poradenství, právní a požární omezení, rozměr a trvanlivost. Skóre u sprejů, stavební chemie, nátěrových hmot a úklidu je po revizi zadání upravené: těžké pytle a kbelíky se bezobslužně prodávají dobře, běžná úklidová drogerie naopak ven. Kusy a obrat jsou průměr za měsíc z obou oken, obrat bez DPH.
 
 | Skupina | Vhodnost | ks/měsíc | Podíl kusů | Obrat/měsíc Kč | Marže | Prům. cena Kč |
 | --- | :-: | --: | --: | --: | --: | --: |
-| Baterie | 5 | 389 | 6,7 % | 8 900 | 50 % | 23 |
-| Lepicí a maskovací pásky | 5 | 256 | 4,4 % | 13 600 | 46 % | 53 |
-| Žárovky a světelné zdroje | 5 | 142 | 2,4 % | 7 400 | 48 % | 52 |
-| Malířské potřeby (štětce, válečky, fólie, brusivo) | 4 | 771 | 13,3 % | 32 100 | 41 % | 42 |
-| Vodoinstalace (objímky, spony, fitinky, těsnění) | 4 | 420 | 7,2 % | 20 700 | 38 % | 49 |
-| Lepidla, tmely, silikony, PU pěny | 4 | 358 | 6,2 % | 43 400 | 30 % | 121 |
-| Elektroinstalační drobný materiál (WAGO, pojistky, vidlice) | 4 | 328 | 5,7 % | 16 400 | 36 % | 50 |
-| Úklid a čisticí prostředky | 4 | 314 | 5,4 % | 21 100 | 36 % | 67 |
-| Semena, hnojiva, ochrana rostlin | 4 | 190 | 3,3 % | 6 800 | 41 % | 36 |
-| Ochranné pomůcky (rukavice) | 4 | 88 | 1,5 % | 9 700 | 39 % | 110 |
-| Hubení škůdců | 4 | 68 | 1,2 % | 3 300 | 35 % | 49 |
-| Podpalovače, zapalovače, uhlí | 4 | 65 | 1,1 % | 3 300 | 33 % | 50 |
-| Svíčky a hřbitovní zboží | 4 | 42 | 0,7 % | 1 700 | 37 % | 39 |
+| Baterie | 5 | 389 | 6,7 % | 8 912 | 50 % | 23 |
+| Lepicí a maskovací pásky | 5 | 256 | 4,4 % | 13 566 | 46 % | 53 |
+| Žárovky a světelné zdroje | 5 | 142 | 2,4 % | 7 411 | 48 % | 52 |
+| Malířské potřeby (štětce, válečky, fólie, brusivo) | 4 | 771 | 13,3 % | 32 126 | 41 % | 42 |
+| Vodoinstalace a hadice | 4 | 420 | 7,2 % | 20 741 | 43 % | 49 |
+| Lepidla, tmely, silikony, PU pěny | 4 | 358 | 6,2 % | 43 396 | 36 % | 121 |
+| Elektroinstalační drobný materiál | 4 | 328 | 5,7 % | 16 390 | 36 % | 50 |
+| Semena, hnojiva, ochrana rostlin | 4 | 190 | 3,3 % | 6 820 | 41 % | 36 |
+| Spreje | 4 | 113 | 1,9 % | 14 890 | 37 % | 132 |
+| Ochranné pomůcky | 4 | 88 | 1,5 % | 9 713 | 39 % | 110 |
+| Hubení škůdců | 4 | 68 | 1,2 % | 3 347 | 35 % | 49 |
+| Podpalovače, topení, zapalování | 4 | 65 | 1,1 % | 3 278 | 33 % | 50 |
+| Svíčky a hřbitovní zboží | 4 | 42 | 0,7 % | 1 652 | 37 % | 39 |
+| Nátěrové hmoty (barvy, laky, lazury) | 3 | 336 | 5,8 % | 122 284 | 37 % | 364 |
 | Kabely a vodiče | 3 | 300 | 5,2 % | 10 000 | 39 % | 33 |
-| Ředidla a technická chemie | 3 | 190 | 3,3 % | 20 500 | 44 % | 108 |
-| Domácnost (věšáky, skřipce, šňůry) | 3 | 138 | 2,4 % | 6 200 | 36 % | 45 |
-| Ruční nářadí a měřidla | 3 | 125 | 2,2 % | 13 300 | 39 % | 106 |
-| Hygiena a papírové zboží | 3 | 101 | 1,7 % | 3 300 | 31 % | 33 |
-| Klíče, kroužky, rozlišovače | 3 | 92 | 1,6 % | 500 | 45 % | 5 |
-| Papírnictví | 3 | 82 | 1,4 % | 3 300 | 36 % | 40 |
-| Spojovací materiál | 3 | 67 | 1,2 % | 2 200 | 36 % | 34 |
-| Nátěrové hmoty (barvy, laky, lazury) | 2 | 336 | 5,8 % | 122 300 | 37 % | 364 |
-| Spreje | 2 | 113 | 1,9 % | 14 900 | 37 % | 132 |
-| Osobní kosmetika | 2 | 67 | 1,2 % | 6 200 | 30 % | 93 |
-| Stavební chemie, sádra | 1 | 67 | 1,2 % | 10 500 | 38 % | 157 |
-| Pyrotechnika, zahradní technika | 1 | 0 | 0 % | 0 | – | – |
-
+| Ředidla a technická chemie | 3 | 190 | 3,3 % | 20 523 | 44 % | 108 |
+| Domácnost (šňůry, kolíčky, věšáky, garnýže) | 3 | 138 | 2,4 % | 6 199 | 36 % | 45 |
+| Ruční nářadí a měřidla | 3 | 125 | 2,2 % | 13 303 | 39 % | 106 |
+| Hygiena a papírové zboží | 3 | 101 | 1,7 % | 3 338 | 31 % | 33 |
+| Klíče, zámky, kroužky | 3 | 92 | 1,6 % | 505 | 45 % | 5 |
+| Papírnictví a psací potřeby | 3 | 82 | 1,4 % | 3 268 | 36 % | 40 |
+| Spojovací materiál | 3 | 67 | 1,2 % | 2 247 | 36 % | 34 |
+| Stavební chemie a sádra | 3 | 67 | 1,2 % | 10 517 | 38 % | 157 |
+| Velikonoční a sezónní zboží | 3 | 42 | 0,7 % | 590 | 37 % | 14 |
+| Domácí zavařování a uzení | 3 | 28 | 0,5 % | 830 | 34 % | 30 |
+| Úklid a čisticí prostředky | 2 | 314 | 5,4 % | 21 143 | 36 % | 67 |
+| Osobní kosmetika | 2 | 67 | 1,2 % | 6 248 | 32 % | 93 |
+| Autodoplňky | 2 | 6 | 0,1 % | 569 | 30 % | 95 |
+| Krmiva a chovatelské potřeby | 2 | 4 | 0,1 % | 283 | 36 % | 71 |
+| Nezařazeno | 0 | 608 | 10,5 % | 97 247 | 34 % | 160 |
 Sezónní skupiny (velikonoční zboží, zavařování, autodoplňky) mají v tomto okně malý objem a jsou v tabulce v Excelu.
 
 ## Doporučené jádro sortimentu (282 položek)
@@ -71,7 +74,6 @@ Filtr: aspoň 3 prodané kusy měsíčně v obou letech, cena do 300 Kč, skupin
 | Lepicí pásky | 20 | 176 | 7 600 | papírové maskovací pásky TX 25–48 mm (37–63 Kč, marže 140 %), izolační pásky, teflon |
 | Semena a ochrana rostlin | 5 | 166 | 4 700 | semena 19/23/42 Kč (marže 42–107 %; 155 ks/měs jen ze tří položek) – sezónní stojan |
 | Lepidla, tmely, pěny | 30 | 142 | 17 500 | Mamut Glue 290 ml (199 Kč, 26 ks/měs), Mamut 25 ml, sanitární silikon, akryl, PU pěna, Loctite |
-| Úklid | 28 | 119 | 5 700 | osvěžovač vzduchu, Solvina, Praganda, Savo, Domestos, pytle na odpad, lopatka |
 | Žárovky | 12 | 72 | 2 500 | G9 Kanlux, E27 40/60 W, E14 svíčka, GU10 LED, LED 8 W E27 |
 | Ochranné pomůcky | 10 | 44 | 1 600 | pracovní rukavice Petrax vel. 8–11 (59 Kč), Allstar, zátky do uší |
 | Hubení škůdců | 9 | 42 | 1 400 | pastičky na myši dřevo/kov, Feroset na moly, Ratimor 150 g, mucholapky |
