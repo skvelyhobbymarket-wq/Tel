@@ -59,7 +59,8 @@ Vhodnost 1–5 hodnotí frekvenci prodeje, cenu, nutnost poradenství, právní 
 | Autodoplňky | 2 | 6 | 0,1 % | 569 | 30 % | 95 |
 | Krmiva a chovatelské potřeby | 2 | 4 | 0,1 % | 283 | 36 % | 71 |
 | Nezařazeno | 0 | 608 | 10,5 % | 97 247 | 34 % | 160 |
-Sezónní skupiny (velikonoční zboží, zavařování, autodoplňky) mají v tomto okně malý objem a jsou v tabulce v Excelu.
+
+Řádek „Nezařazeno“ je dlouhý chvost, který klasifikace podle názvu nerozdělila (713 aktivních položek). Sezónní skupiny mají v jarním okně malý objem, v zimě a před Vánocemi jsou výrazně silnější.
 
 ## Doporučené jádro sortimentu (282 položek)
 
